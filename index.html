@@ -680,41 +680,31 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     return arr;
   }
 
-  // --- API calls ---
-  function apiGet(action, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", API_URL + "?action=" + action, true);
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        try { callback(JSON.parse(xhr.responseText)); } catch(e) { callback(null); }
-      } else { callback(null); }
-    };
-    xhr.onerror = function() { callback(null); };
-    xhr.send();
-  }
-
-  function apiPost(data, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", API_URL, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = function() {
-      if (xhr.status === 200) {
-        try { callback(JSON.parse(xhr.responseText)); } catch(e) { callback(null); }
-      } else { callback(null); }
-    };
-    xhr.onerror = function() { callback(null); };
-    xhr.send(JSON.stringify(data));
+  // --- API calls (all via GET to avoid CORS issues) ---
+  function apiCall(params, callback) {
+    var url = API_URL + "?" + Object.keys(params).map(function(k) {
+      return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+    }).join("&");
+    
+    var script = document.createElement("script");
+    var callbackName = "_cb" + Date.now() + Math.random().toString(36).substr(2);
+    
+    // Use fetch with redirect follow (Google Apps Script redirects)
+    fetch(url, { redirect: "follow" })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { callback(data); })
+      .catch(function(err) { callback(null); });
   }
 
   function loadData() {
-    apiGet("getPeople", function(res) {
+    apiCall({ action: "getPeople" }, function(res) {
       if (res && res.people) {
         people = res.people;
         populateLoginSelect();
         renderPeopleList();
       }
     });
-    apiGet("getLeave", function(res) {
+    apiCall({ action: "getLeave" }, function(res) {
       if (res && res.leave) {
         leaveData = res.leave;
       }
@@ -804,7 +794,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     btn.disabled = true;
     btn.textContent = "Submitting...";
 
-    apiPost({ action: "submitLeave", login: login, dates: dates }, function(res) {
+    apiCall({ action: "submitLeave", login: login, dates: dates.join(",") }, function(res) {
       btn.disabled = false;
       btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Leave';
       if (res && res.success) {
@@ -921,7 +911,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       if (people[i].login === login) { showToast("Login already exists", true); return; }
     }
 
-    apiPost({ action: "addPerson", login: login, role: role }, function(res) {
+    apiCall({ action: "addPerson", login: login, role: role }, function(res) {
       if (res && res.success) {
         people.push({ login: login, role: role });
         document.getElementById("new-login").value = "";
@@ -953,7 +943,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     for (var j = 0; j < removeBtns.length; j++) {
       removeBtns[j].addEventListener("click", function() {
         var login = this.getAttribute("data-login");
-        apiPost({ action: "removePerson", login: login }, function(res) {
+        apiCall({ action: "removePerson", login: login }, function(res) {
           if (res && res.success) {
             people = people.filter(function(p) { return p.login !== login; });
             delete leaveData[login];
