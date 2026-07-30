@@ -372,170 +372,61 @@ a { color: var(--color-link, var(--color-primary)); }</style>
   --radius-sm: 8px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding-bottom: 80px;
-}
-.header {
-  background: var(--primary);
-  color: white;
-  padding: 20px 16px 16px;
-  text-align: center;
-}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
+.header { background: var(--primary); color: white; padding: 20px 16px 16px; text-align: center; }
 .header h1 { font-size: 18px; font-weight: 700; }
 .header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
 
-/* Bottom Nav */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border-light);
-  display: flex;
-  z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.nav-item {
-  flex: 1;
-  text-align: center;
-  padding: 10px 4px 8px;
-  cursor: pointer;
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 500;
-  transition: color 0.15s;
-}
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border-light); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+.nav-item { flex: 1; text-align: center; padding: 10px 4px 8px; cursor: pointer; color: var(--text-muted); font-size: 10px; font-weight: 500; transition: color 0.15s; }
 .nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
 .nav-item.active { color: var(--primary); }
+.nav-item.locked { position: relative; }
+.nav-item.locked::after { content: "\f023"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 8px; position: absolute; top: 6px; right: calc(50% - 20px); color: var(--text-muted); }
 
-/* Views */
 .view { display: none; padding: 16px; }
 .view.active { display: block; }
-
-/* Cards */
-.card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
+.card { background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .card-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
 
-/* Form elements */
-select, input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 16px;
-  background: var(--surface);
-  color: var(--text);
-  appearance: none;
-  -webkit-appearance: none;
-}
+select, input[type="text"], input[type="password"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 16px; background: var(--surface); color: var(--text); appearance: none; -webkit-appearance: none; }
 select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238993a4' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
 
-/* Week selector */
 .week-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
 .week-tabs { display: flex; gap: 8px; padding-bottom: 12px; min-width: max-content; }
-.week-tab {
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  background: var(--border-light);
-  color: var(--text-secondary);
-  border: none;
-}
+.week-tab { padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; background: var(--border-light); color: var(--text-secondary); border: none; }
 .week-tab.active { background: var(--primary); color: white; }
 
-/* Day grid */
 .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
-.day-cell {
-  text-align: center;
-  padding: 10px 4px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.15s;
-  user-select: none;
-  -webkit-user-select: none;
-}
+.day-cell { text-align: center; padding: 10px 4px; border-radius: var(--radius-sm); cursor: pointer; border: 2px solid transparent; transition: all 0.15s; user-select: none; -webkit-user-select: none; }
 .day-cell .day-name { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 .day-cell .day-date { font-size: 14px; font-weight: 600; margin-top: 2px; }
 .day-cell.weekend { opacity: 0.4; }
 .day-cell.selected { background: var(--primary); border-color: var(--primary); }
 .day-cell.selected .day-name, .day-cell.selected .day-date { color: white; }
-.day-cell:not(.selected) { background: var(--bg); }
-.day-cell:not(.selected):active { background: var(--border-light); }
+.day-cell.booked { background: var(--success); border-color: var(--success); }
+.day-cell.booked .day-name, .day-cell.booked .day-date { color: white; }
+.day-cell:not(.selected):not(.booked) { background: var(--bg); }
+.day-cell:not(.selected):not(.booked):active { background: var(--border-light); }
 
-/* Submit button */
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 16px;
-}
+.btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; }
 .btn-primary:active { opacity: 0.9; }
 .btn-primary:disabled { opacity: 0.5; }
+.btn-danger { width: 100%; padding: 14px; background: var(--error); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+.btn-danger:active { opacity: 0.9; }
 
-/* Toast */
-.toast {
-  position: fixed;
-  top: 20px;
-  left: 16px;
-  right: 16px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 1000;
-  display: none;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
+.toast { position: fixed; top: 20px; left: 16px; right: 16px; padding: 14px 16px; border-radius: var(--radius-sm); color: white; font-size: 14px; font-weight: 500; z-index: 1000; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-/* Dashboard */
 .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
 .stat-box { background: var(--surface); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .stat-box .num { font-size: 22px; font-weight: 700; color: var(--primary); }
 .stat-box .label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
 .filter-row { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; }
-.filter-chip {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  background: var(--border-light);
-  color: var(--text-secondary);
-  border: none;
-}
+.filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer; background: var(--border-light); color: var(--text-secondary); border: none; }
 .filter-chip.active { background: var(--primary); color: white; }
 
-.leave-row {
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-light);
-}
+.leave-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
 .leave-row:last-child { border-bottom: none; }
 .leave-name { flex: 1; font-size: 13px; font-weight: 500; }
 .leave-role { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-right: 8px; }
@@ -543,38 +434,38 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .leave-role.pi { background: #fff3e0; color: #e65100; }
 .leave-role.sme { background: #f3e5f5; color: #6a1b9a; }
 .leave-days { display: flex; gap: 2px; }
-.leave-dot {
-  width: 20px; height: 20px;
-  border-radius: 4px;
-  font-size: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700;
-}
+.leave-dot { width: 20px; height: 20px; border-radius: 4px; font-size: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 .leave-dot.on { background: var(--primary-light); color: #1565c0; }
 .leave-dot.off { background: var(--border-light); color: transparent; }
 .leave-dot.today-marker { outline: 2px solid var(--primary); }
 
-/* Manage */
-.person-row {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border-light);
-}
+.person-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-light); }
 .person-row:last-child { border-bottom: none; }
 .person-info { flex: 1; }
 .person-login { font-size: 14px; font-weight: 500; }
 .person-role { font-size: 11px; color: var(--text-muted); }
 .remove-btn { background: none; border: none; color: var(--error); font-size: 18px; cursor: pointer; padding: 8px; }
 
-/* Loading */
 .loading { text-align: center; padding: 40px; color: var(--text-muted); }
 .loading i { font-size: 24px; margin-bottom: 8px; display: block; }
 
-/* Status indicator */
-.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-.status-dot.online { background: var(--success); }
-.status-dot.offline { background: var(--error); }
+/* Modal overlay */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--surface); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 320px; text-align: center; }
+.modal h3 { font-size: 16px; margin-bottom: 4px; }
+.modal p { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+.modal input { margin-bottom: 12px; text-align: center; font-size: 24px; letter-spacing: 8px; }
+.modal-btn { width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 8px; }
+.modal-btn.primary { background: var(--primary); color: white; }
+.modal-btn.secondary { background: var(--border-light); color: var(--text-secondary); }
+
+/* My Leave list */
+.my-leave-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+.my-leave-item:last-child { border-bottom: none; }
+.my-leave-date { font-size: 14px; font-weight: 500; }
+.my-leave-day { font-size: 12px; color: var(--text-muted); }
+.cancel-leave-btn { background: none; border: 1px solid var(--error); color: var(--error); font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -583,6 +474,28 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <p>Smile Makers | Process Instructors | SMEs</p>
 </div>
 <div id="toast" class="toast"></div>
+
+<!-- PIN MODAL -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal">
+    <h3 id="pin-title">Enter your PIN</h3>
+    <p id="pin-subtitle">4-digit PIN to access your account</p>
+    <input type="password" id="pin-input" maxlength="4" placeholder="----" inputmode="numeric" pattern="[0-9]*">
+    <button class="modal-btn primary" id="pin-confirm">Confirm</button>
+    <button class="modal-btn secondary" id="pin-cancel">Cancel</button>
+  </div>
+</div>
+
+<!-- ADMIN PIN MODAL -->
+<div class="modal-overlay" id="admin-modal">
+  <div class="modal">
+    <h3><i class="fa-solid fa-lock"></i> Trainer Access</h3>
+    <p>Enter the admin PIN to access Dashboard &amp; Manage</p>
+    <input type="password" id="admin-pin-input" maxlength="4" placeholder="----" inputmode="numeric" pattern="[0-9]*">
+    <button class="modal-btn primary" id="admin-confirm">Unlock</button>
+    <button class="modal-btn secondary" id="admin-cancel">Cancel</button>
+  </div>
+</div>
 
 <!-- SUBMIT VIEW -->
 <div id="view-submit" class="view active">
@@ -594,8 +507,17 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="card-title">Select week</div>
     <div class="week-scroll"><div class="week-tabs" id="week-tabs"></div></div>
     <div class="day-grid" id="day-grid"></div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:8px;"><span style="display:inline-block;width:12px;height:12px;background:var(--success);border-radius:3px;vertical-align:middle;margin-right:4px;"></span> = Already booked</p>
   </div>
   <button class="btn-primary" id="submit-btn"><i class="fa-solid fa-paper-plane"></i> Submit Leave</button>
+</div>
+
+<!-- MY LEAVE VIEW -->
+<div id="view-myleave" class="view">
+  <div class="card">
+    <div class="card-title">My Upcoming Leave</div>
+    <div id="my-leave-list"></div>
+  </div>
 </div>
 
 <!-- DASHBOARD VIEW -->
@@ -630,117 +552,129 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="nav-item active" data-view="submit"><i class="fa-solid fa-pen-to-square"></i>Submit</div>
-  <div class="nav-item" data-view="dashboard"><i class="fa-solid fa-chart-bar"></i>Dashboard</div>
-  <div class="nav-item" data-view="manage"><i class="fa-solid fa-users-gear"></i>Manage</div>
+  <div class="nav-item" data-view="myleave"><i class="fa-solid fa-calendar-days"></i>My Leave</div>
+  <div class="nav-item locked" data-view="dashboard"><i class="fa-solid fa-chart-bar"></i>Dashboard</div>
+  <div class="nav-item locked" data-view="manage"><i class="fa-solid fa-users-gear"></i>Manage</div>
 </div>
 
 <script>
 (function() {
-  // ======== CONFIG — SET YOUR GOOGLE APPS SCRIPT URL HERE ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbywTlRvx-JsN51z5QeAy7iMsP1hHu6YiIIuZdIAjhraDnWdTwAtqVq8CTv7GeFJAR_s/exec";
-  // ===============================================================
+  // ======== CONFIG ========
+  var API_URL = "https://script.google.com/macros/s/AKfycbyfYXgiNQA2lxSMdGKctq4Nq9pg8Kssdo0dHu5AphjbukJTOpcXxcX7cPQWlwuRtKOo/exec";
+  var ADMIN_PIN = "1234"; // Change this to your trainer PIN
+  // =========================
 
   var people = [];
   var leaveData = {};
   var selectedWeek = 31;
   var dashWeek = 31;
   var activeFilter = "all";
+  var currentUser = null;
+  var adminUnlocked = false;
   var DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var WEEK_31_START = new Date(2026, 6, 26);
 
   // --- Date helpers ---
-  function dateKey(d) {
-    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  }
+  function dateKey(d) { return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
   function shortDate(d) { return d.getDate() + " " + MONTHS[d.getMonth()]; }
-  function getWeekStart(wk) {
-    var d = new Date(WEEK_31_START.getTime());
-    d.setDate(d.getDate() + (wk - 31) * 7);
-    return d;
+  function longDate(dateStr) {
+    var parts = dateStr.split("-");
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    return DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];
   }
+  function getWeekStart(wk) { var d = new Date(WEEK_31_START.getTime()); d.setDate(d.getDate() + (wk - 31) * 7); return d; }
   function getWeekDays(wk) {
-    var start = getWeekStart(wk);
-    var days = [];
-    for (var i = 0; i < 7; i++) {
-      var d = new Date(start.getTime());
-      d.setDate(d.getDate() + i);
-      days.push({ date: d, name: DAY_NAMES[i], key: dateKey(d) });
-    }
+    var start = getWeekStart(wk); var days = [];
+    for (var i = 0; i < 7; i++) { var d = new Date(start.getTime()); d.setDate(d.getDate() + i); days.push({ date: d, name: DAY_NAMES[i], key: dateKey(d) }); }
     return days;
   }
-  function getCurrentWeek() {
-    var diff = Math.floor((new Date() - WEEK_31_START) / 86400000);
-    return 31 + Math.floor(diff / 7);
-  }
-  function getWeeks() {
-    var cw = getCurrentWeek();
-    var arr = [];
-    for (var i = 0; i < 8; i++) arr.push(cw + i);
-    return arr;
-  }
+  function getCurrentWeek() { var diff = Math.floor((new Date() - WEEK_31_START) / 86400000); return 31 + Math.floor(diff / 7); }
+  function getWeeks() { var cw = getCurrentWeek(); var arr = []; for (var i = 0; i < 8; i++) arr.push(cw + i); return arr; }
 
-  // --- API calls (all via GET to avoid CORS issues) ---
+  // --- API ---
   function apiCall(params, callback) {
-    var url = API_URL + "?" + Object.keys(params).map(function(k) {
-      return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
-    }).join("&");
-    
-    var script = document.createElement("script");
-    var callbackName = "_cb" + Date.now() + Math.random().toString(36).substr(2);
-    
-    // Use fetch with redirect follow (Google Apps Script redirects)
-    fetch(url, { redirect: "follow" })
-      .then(function(r) { return r.json(); })
-      .then(function(data) { callback(data); })
-      .catch(function(err) { callback(null); });
+    var url = API_URL + "?" + Object.keys(params).map(function(k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+    fetch(url, { redirect: "follow" }).then(function(r) { return r.json(); }).then(function(data) { callback(data); }).catch(function() { callback(null); });
   }
 
   function loadData() {
     var loaded = 0;
-    function checkReady() {
-      loaded++;
-      if (loaded >= 2) {
-        populateLoginSelect();
-        renderPeopleList();
-        renderDashboard();
-      }
-    }
-    apiCall({ action: "getPeople" }, function(res) {
-      if (res && res.people) {
-        people = res.people;
-      }
-      checkReady();
-    });
-    apiCall({ action: "getLeave" }, function(res) {
-      if (res && res.leave) {
-        leaveData = res.leave;
-      }
-      checkReady();
-    });
+    function checkReady() { loaded++; if (loaded >= 2) { populateLoginSelect(); renderPeopleList(); renderDashboard(); } }
+    apiCall({ action: "getPeople" }, function(res) { if (res && res.people) people = res.people; checkReady(); });
+    apiCall({ action: "getLeave" }, function(res) { if (res && res.leave) leaveData = res.leave; checkReady(); });
   }
 
   // --- Toast ---
-  function showToast(msg, isError) {
-    var t = document.getElementById("toast");
-    t.textContent = msg;
-    t.style.background = isError ? "#de350b" : "#36b37e";
-    t.style.display = "block";
-    setTimeout(function() { t.style.display = "none"; }, 3000);
+  function showToast(msg, isError) { var t = document.getElementById("toast"); t.textContent = msg; t.style.background = isError ? "#de350b" : "#36b37e"; t.style.display = "block"; setTimeout(function() { t.style.display = "none"; }, 3000); }
+
+  // --- PIN Modal ---
+  var pinCallback = null;
+  var pinMode = "verify"; // "verify", "set", "create"
+
+  function showPinModal(title, subtitle, mode, cb) {
+    pinMode = mode;
+    pinCallback = cb;
+    document.getElementById("pin-title").textContent = title;
+    document.getElementById("pin-subtitle").textContent = subtitle;
+    document.getElementById("pin-input").value = "";
+    document.getElementById("pin-modal").classList.add("show");
+    setTimeout(function() { document.getElementById("pin-input").focus(); }, 100);
   }
+
+  function hidePinModal() { document.getElementById("pin-modal").classList.remove("show"); pinCallback = null; }
+
+  document.getElementById("pin-confirm").addEventListener("click", function() {
+    var pin = document.getElementById("pin-input").value;
+    if (pin.length !== 4) { showToast("PIN must be 4 digits", true); return; }
+    if (pinCallback) pinCallback(pin);
+    hidePinModal();
+  });
+  document.getElementById("pin-cancel").addEventListener("click", hidePinModal);
+
+  // --- Admin Modal ---
+  var adminCallback = null;
+  function showAdminModal(cb) {
+    adminCallback = cb;
+    document.getElementById("admin-pin-input").value = "";
+    document.getElementById("admin-modal").classList.add("show");
+    setTimeout(function() { document.getElementById("admin-pin-input").focus(); }, 100);
+  }
+  function hideAdminModal() { document.getElementById("admin-modal").classList.remove("show"); adminCallback = null; }
+  document.getElementById("admin-confirm").addEventListener("click", function() {
+    var pin = document.getElementById("admin-pin-input").value;
+    if (pin === ADMIN_PIN) { adminUnlocked = true; hideAdminModal(); if (adminCallback) adminCallback(); }
+    else { showToast("Incorrect admin PIN", true); }
+  });
+  document.getElementById("admin-cancel").addEventListener("click", hideAdminModal);
 
   // --- Navigation ---
   var navItems = document.querySelectorAll(".nav-item");
+  function switchView(viewName) {
+    for (var j = 0; j < navItems.length; j++) navItems[j].classList.remove("active");
+    document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
+    document.querySelector('[data-view="' + viewName + '"]').classList.add("active");
+    document.getElementById("view-" + viewName).classList.add("active");
+    if (viewName === "dashboard") renderDashboard();
+    if (viewName === "manage") renderPeopleList();
+    if (viewName === "submit") { buildWeekTabs(); renderDayGrid(); populateLoginSelect(); }
+    if (viewName === "myleave") renderMyLeave();
+  }
+
   for (var i = 0; i < navItems.length; i++) {
     navItems[i].addEventListener("click", function() {
       var view = this.getAttribute("data-view");
-      for (var j = 0; j < navItems.length; j++) navItems[j].classList.remove("active");
-      this.classList.add("active");
-      document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
-      document.getElementById("view-" + view).classList.add("active");
-      if (view === "dashboard") renderDashboard();
-      if (view === "manage") renderPeopleList();
-      if (view === "submit") { buildWeekTabs(); renderDayGrid(); populateLoginSelect(); }
+      // Admin-only views
+      if (view === "dashboard" || view === "manage") {
+        if (!adminUnlocked) { showAdminModal(function() { switchView(view); }); return; }
+      }
+      // My Leave requires user selection
+      if (view === "myleave") {
+        var login = document.getElementById("login-select").value;
+        if (!login) { showToast("Select your login first", true); return; }
+        currentUser = login;
+      }
+      switchView(view);
     });
   }
 
@@ -749,161 +683,190 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     var sel = document.getElementById("login-select");
     var html = '<option value="">Select your login...</option>';
     var sorted = people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
-    for (var i = 0; i < sorted.length; i++) {
-      html += '<option value="' + sorted[i].login + '">' + sorted[i].login + '</option>';
-    }
+    for (var i = 0; i < sorted.length; i++) { html += '<option value="' + sorted[i].login + '">' + sorted[i].login + '</option>'; }
     sel.innerHTML = html;
   }
 
   function buildWeekTabs() {
-    var weeks = getWeeks();
-    var container = document.getElementById("week-tabs");
-    container.innerHTML = "";
+    var weeks = getWeeks(); var container = document.getElementById("week-tabs"); container.innerHTML = "";
     for (var i = 0; i < weeks.length; i++) {
       var tab = document.createElement("button");
       tab.className = "week-tab" + (weeks[i] === selectedWeek ? " active" : "");
       var days = getWeekDays(weeks[i]);
       tab.textContent = "W" + weeks[i] + " (" + shortDate(days[0].date) + ")";
       tab.setAttribute("data-week", weeks[i]);
-      tab.addEventListener("click", function() {
-        selectedWeek = parseInt(this.getAttribute("data-week"));
-        buildWeekTabs();
-        renderDayGrid();
-      });
+      tab.addEventListener("click", function() { selectedWeek = parseInt(this.getAttribute("data-week")); buildWeekTabs(); renderDayGrid(); });
       container.appendChild(tab);
     }
   }
 
   function renderDayGrid() {
-    var grid = document.getElementById("day-grid");
-    grid.innerHTML = "";
+    var grid = document.getElementById("day-grid"); grid.innerHTML = "";
     var days = getWeekDays(selectedWeek);
     var today = dateKey(new Date());
+    var login = document.getElementById("login-select").value;
+    var userLeave = (login && leaveData[login]) ? leaveData[login] : [];
+
     for (var i = 0; i < days.length; i++) {
       var cell = document.createElement("div");
       var isWeekend = (days[i].name === "Sun" || days[i].name === "Sat");
-      cell.className = "day-cell" + (isWeekend ? " weekend" : "");
+      var isBooked = userLeave.indexOf(days[i].key) !== -1;
+      cell.className = "day-cell" + (isWeekend ? " weekend" : "") + (isBooked ? " booked" : "");
       cell.setAttribute("data-key", days[i].key);
       cell.innerHTML = '<div class="day-name">' + days[i].name + '</div><div class="day-date">' + days[i].date.getDate() + '</div>';
-      if (days[i].key === today) cell.style.border = "2px solid var(--primary)";
-      cell.addEventListener("click", function() { this.classList.toggle("selected"); });
+      if (days[i].key === today) cell.style.outline = "2px solid var(--primary)";
+      if (!isBooked) { cell.addEventListener("click", function() { this.classList.toggle("selected"); }); }
       grid.appendChild(cell);
     }
   }
+
+  // Re-render day grid when user changes
+  document.getElementById("login-select").addEventListener("change", function() { renderDayGrid(); });
 
   document.getElementById("submit-btn").addEventListener("click", function() {
     var login = document.getElementById("login-select").value;
     if (!login) { showToast("Please select your login", true); return; }
     var selected = document.querySelectorAll(".day-cell.selected");
     if (selected.length === 0) { showToast("Please select at least one day", true); return; }
+
+    // Find the person
+    var person = people.find(function(p) { return p.login === login; });
+    if (!person) { showToast("Login not found", true); return; }
+
+    // Check if person has a PIN set
+    if (person.pin) {
+      // Verify PIN
+      showPinModal("Enter your PIN", "Confirm your identity to submit leave", "verify", function(pin) {
+        if (pin === person.pin) { doSubmitLeave(login); }
+        else { showToast("Incorrect PIN", true); }
+      });
+    } else {
+      // First time - set PIN
+      showPinModal("Create your PIN", "Set a 4-digit PIN to protect your account", "create", function(pin) {
+        apiCall({ action: "setPin", login: login, pin: pin }, function(res) {
+          if (res && res.success) { person.pin = pin; doSubmitLeave(login); }
+          else { showToast("Failed to set PIN", true); }
+        });
+      });
+    }
+  });
+
+  function doSubmitLeave(login) {
+    var selected = document.querySelectorAll(".day-cell.selected");
     var dates = [];
     for (var i = 0; i < selected.length; i++) dates.push(selected[i].getAttribute("data-key"));
-
     var btn = document.getElementById("submit-btn");
-    btn.disabled = true;
-    btn.textContent = "Submitting...";
-
+    btn.disabled = true; btn.textContent = "Submitting...";
     apiCall({ action: "submitLeave", login: login, dates: dates.join(",") }, function(res) {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Leave';
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Leave';
       if (res && res.success) {
         if (!leaveData[login]) leaveData[login] = [];
-        for (var i = 0; i < dates.length; i++) {
-          if (leaveData[login].indexOf(dates[i]) === -1) leaveData[login].push(dates[i]);
-        }
-        document.querySelectorAll(".day-cell.selected").forEach(function(c) { c.classList.remove("selected"); });
+        for (var i = 0; i < dates.length; i++) { if (leaveData[login].indexOf(dates[i]) === -1) leaveData[login].push(dates[i]); }
+        renderDayGrid();
         showToast("Leave submitted! (" + dates.length + " days)", false);
-      } else {
-        showToast("Failed to submit. Check connection.", true);
-      }
+      } else { showToast("Failed to submit. Check connection.", true); }
     });
-  });
+  }
+
+  // --- My Leave View ---
+  function renderMyLeave() {
+    var login = currentUser || document.getElementById("login-select").value;
+    var list = document.getElementById("my-leave-list");
+    var userLeave = (login && leaveData[login]) ? leaveData[login] : [];
+    var today = dateKey(new Date());
+
+    // Filter to future/today dates and sort
+    var upcoming = userLeave.filter(function(d) { return d >= today; }).sort();
+
+    if (upcoming.length === 0) {
+      list.innerHTML = '<div class="loading"><i class="fa-solid fa-umbrella-beach"></i><p>No upcoming leave booked</p></div>';
+      return;
+    }
+
+    var html = "";
+    for (var i = 0; i < upcoming.length; i++) {
+      html += '<div class="my-leave-item"><div><div class="my-leave-date">' + longDate(upcoming[i]) + '</div></div><button class="cancel-leave-btn" data-date="' + upcoming[i] + '">Cancel</button></div>';
+    }
+    list.innerHTML = html;
+
+    // Attach cancel handlers
+    var cancelBtns = list.querySelectorAll(".cancel-leave-btn");
+    for (var j = 0; j < cancelBtns.length; j++) {
+      cancelBtns[j].addEventListener("click", function() {
+        var dateToCancel = this.getAttribute("data-date");
+        var person = people.find(function(p) { return p.login === login; });
+
+        if (person && person.pin) {
+          showPinModal("Enter your PIN", "Confirm to cancel this leave day", "verify", function(pin) {
+            if (pin === person.pin) { doCancelLeave(login, dateToCancel); }
+            else { showToast("Incorrect PIN", true); }
+          });
+        } else { doCancelLeave(login, dateToCancel); }
+      });
+    }
+  }
+
+  function doCancelLeave(login, date) {
+    apiCall({ action: "cancelLeave", login: login, date: date }, function(res) {
+      if (res && res.success) {
+        leaveData[login] = leaveData[login].filter(function(d) { return d !== date; });
+        renderMyLeave();
+        showToast("Leave cancelled", false);
+      } else { showToast("Failed to cancel", true); }
+    });
+  }
 
   // --- Dashboard ---
   function buildDashWeekTabs() {
-    var weeks = getWeeks();
-    var container = document.getElementById("dash-week-tabs");
-    container.innerHTML = "";
+    var weeks = getWeeks(); var container = document.getElementById("dash-week-tabs"); container.innerHTML = "";
     for (var i = 0; i < weeks.length; i++) {
       var tab = document.createElement("button");
       tab.className = "week-tab" + (weeks[i] === dashWeek ? " active" : "");
       tab.textContent = "W" + weeks[i];
       tab.setAttribute("data-week", weeks[i]);
-      tab.addEventListener("click", function() {
-        dashWeek = parseInt(this.getAttribute("data-week"));
-        renderDashboard();
-      });
+      tab.addEventListener("click", function() { dashWeek = parseInt(this.getAttribute("data-week")); renderDashboard(); });
       container.appendChild(tab);
     }
   }
 
   function renderDashboard() {
-    var today = dateKey(new Date());
-    var weeks = getWeeks();
-    var currentWk = getCurrentWeek();
-
-    // Stats
-    var onLeaveToday = 0;
-    var leaveDaysThisWeek = 0;
-    var thisWeekDays = getWeekDays(currentWk);
+    var today = dateKey(new Date()); var currentWk = getCurrentWeek();
+    var onLeaveToday = 0; var leaveDaysThisWeek = 0; var thisWeekDays = getWeekDays(currentWk);
     for (var p = 0; p < people.length; p++) {
       var pLeave = leaveData[people[p].login] || [];
       if (pLeave.indexOf(today) !== -1) onLeaveToday++;
-      for (var d = 0; d < thisWeekDays.length; d++) {
-        if (pLeave.indexOf(thisWeekDays[d].key) !== -1) leaveDaysThisWeek++;
-      }
+      for (var d = 0; d < thisWeekDays.length; d++) { if (pLeave.indexOf(thisWeekDays[d].key) !== -1) leaveDaysThisWeek++; }
     }
-    document.getElementById("stats").innerHTML =
-      '<div class="stat-box"><div class="num">' + onLeaveToday + '</div><div class="label">Off Today</div></div>' +
-      '<div class="stat-box"><div class="num">' + leaveDaysThisWeek + '</div><div class="label">Days This Wk</div></div>' +
-      '<div class="stat-box"><div class="num">' + people.length + '</div><div class="label">People</div></div>';
+    document.getElementById("stats").innerHTML = '<div class="stat-box"><div class="num">' + onLeaveToday + '</div><div class="label">Off Today</div></div><div class="stat-box"><div class="num">' + leaveDaysThisWeek + '</div><div class="label">Days This Wk</div></div><div class="stat-box"><div class="num">' + people.length + '</div><div class="label">People</div></div>';
 
     buildDashWeekTabs();
-
-    // Filters
-    var filtersEl = document.getElementById("dash-filters");
-    filtersEl.innerHTML = "";
+    var filtersEl = document.getElementById("dash-filters"); filtersEl.innerHTML = "";
     var opts = [{k:"all",l:"All"},{k:"SM",l:"SM"},{k:"PI",l:"PI"},{k:"SME",l:"SME"}];
     for (var f = 0; f < opts.length; f++) {
       var chip = document.createElement("button");
       chip.className = "filter-chip" + (activeFilter === opts[f].k ? " active" : "");
       chip.textContent = opts[f].l;
       chip.setAttribute("data-filter", opts[f].k);
-      chip.addEventListener("click", function() {
-        activeFilter = this.getAttribute("data-filter");
-        renderDashboard();
-      });
+      chip.addEventListener("click", function() { activeFilter = this.getAttribute("data-filter"); renderDashboard(); });
       filtersEl.appendChild(chip);
     }
 
-    // List
     var filtered = [];
-    for (var i = 0; i < people.length; i++) {
-      if (activeFilter === "all" || people[i].role === activeFilter) filtered.push(people[i]);
-    }
+    for (var i = 0; i < people.length; i++) { if (activeFilter === "all" || people[i].role === activeFilter) filtered.push(people[i]); }
     filtered.sort(function(a,b) { return a.login.localeCompare(b.login); });
-
     var listEl = document.getElementById("dash-list");
-    if (filtered.length === 0) {
-      listEl.innerHTML = '<div class="loading"><i class="fa-solid fa-users"></i><p>No people added yet</p></div>';
-      return;
-    }
+    if (filtered.length === 0) { listEl.innerHTML = '<div class="loading"><i class="fa-solid fa-users"></i><p>No people added yet</p></div>'; return; }
 
     var days = getWeekDays(dashWeek);
     var html = '<div style="display:flex;gap:2px;justify-content:flex-end;margin-bottom:8px;padding-right:4px;">';
-    for (var dh = 0; dh < 7; dh++) {
-      html += '<div style="width:20px;text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">' + days[dh].name.charAt(0) + '</div>';
-    }
+    for (var dh = 0; dh < 7; dh++) { html += '<div style="width:20px;text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">' + days[dh].name.charAt(0) + '</div>'; }
     html += '</div>';
-
     for (var r = 0; r < filtered.length; r++) {
-      var person = filtered[r];
-      var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme";
+      var person = filtered[r]; var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme";
       html += '<div class="leave-row"><div class="leave-name">' + person.login + '</div><span class="leave-role ' + rc + '">' + person.role + '</span><div class="leave-days">';
       var pLeave2 = leaveData[person.login] || [];
       for (var d2 = 0; d2 < 7; d2++) {
-        var hasLeave = pLeave2.indexOf(days[d2].key) !== -1;
-        var isToday = days[d2].key === today;
+        var hasLeave = pLeave2.indexOf(days[d2].key) !== -1; var isToday = days[d2].key === today;
         html += '<div class="leave-dot ' + (hasLeave ? "on" : "off") + (isToday ? " today-marker" : "") + '">' + (hasLeave ? "AL" : "") + '</div>';
       }
       html += '</div></div>';
@@ -916,65 +879,38 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     var login = document.getElementById("new-login").value.trim().toLowerCase();
     var role = document.getElementById("new-role").value;
     if (!login) { showToast("Please enter a login", true); return; }
-    for (var i = 0; i < people.length; i++) {
-      if (people[i].login === login) { showToast("Login already exists", true); return; }
-    }
-
+    for (var i = 0; i < people.length; i++) { if (people[i].login === login) { showToast("Login already exists", true); return; } }
     apiCall({ action: "addPerson", login: login, role: role }, function(res) {
-      if (res && res.success) {
-        people.push({ login: login, role: role });
-        document.getElementById("new-login").value = "";
-        renderPeopleList();
-        populateLoginSelect();
-        showToast("Added " + login, false);
-      } else {
-        showToast("Failed to add. Check connection.", true);
-      }
+      if (res && res.success) { people.push({ login: login, role: role }); document.getElementById("new-login").value = ""; renderPeopleList(); populateLoginSelect(); showToast("Added " + login, false); }
+      else { showToast("Failed to add. Check connection.", true); }
     });
   });
 
   function renderPeopleList() {
     var list = document.getElementById("people-list");
-    if (people.length === 0) {
-      list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members yet</p></div>';
-      return;
-    }
+    if (people.length === 0) { list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members yet</p></div>'; return; }
     var sorted = people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
     var html = "";
     for (var i = 0; i < sorted.length; i++) {
-      var p = sorted[i];
-      var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
+      var p = sorted[i]; var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
       html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + '</div></div><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
     }
     list.innerHTML = html;
-
     var removeBtns = list.querySelectorAll(".remove-btn");
     for (var j = 0; j < removeBtns.length; j++) {
       removeBtns[j].addEventListener("click", function() {
-        var login = this.getAttribute("data-login");
-        apiCall({ action: "removePerson", login: login }, function(res) {
-          if (res && res.success) {
-            people = people.filter(function(p) { return p.login !== login; });
-            delete leaveData[login];
-            renderPeopleList();
-            populateLoginSelect();
-            showToast("Removed " + login, false);
-          }
+        var loginToRemove = this.getAttribute("data-login");
+        apiCall({ action: "removePerson", login: loginToRemove }, function(res) {
+          if (res && res.success) { people = people.filter(function(p) { return p.login !== loginToRemove; }); delete leaveData[loginToRemove]; renderPeopleList(); populateLoginSelect(); showToast("Removed " + loginToRemove, false); }
         });
       });
     }
   }
 
   // --- INIT ---
-  selectedWeek = getCurrentWeek();
-  dashWeek = getCurrentWeek();
-  buildWeekTabs();
-  renderDayGrid();
-
-  // Load data from API
-  if (API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
-    loadData();
-  }
+  selectedWeek = getCurrentWeek(); dashWeek = getCurrentWeek();
+  buildWeekTabs(); renderDayGrid();
+  if (API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") { loadData(); }
 })();
 </script>
 
