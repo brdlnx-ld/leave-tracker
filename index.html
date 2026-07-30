@@ -560,7 +560,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 (function() {
   // ======== CONFIG ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbyfYXgiNQA2lxSMdGKctq4Nq9pg8Kssdo0dHu5AphjbukJTOpcXxcX7cPQWlwuRtKOo/exec";
+  var API_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
   var ADMIN_PIN = "1234"; // Change this to your trainer PIN
   // =========================
 
@@ -571,6 +571,18 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   var activeFilter = "all";
   var currentUser = null;
   var adminUnlocked = false;
+  
+  function setLoggedIn(loggedIn) {
+    var grid = document.getElementById("day-grid");
+    var btn = document.getElementById("submit-btn");
+    if (loggedIn) {
+      btn.disabled = false;
+      renderDayGrid();
+    } else {
+      grid.innerHTML = '<div class="loading" style="padding:20px;"><i class="fa-solid fa-lock"></i><p>Select your name to log in</p></div>';
+      btn.disabled = true;
+    }
+  }
   var DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var WEEK_31_START = new Date(2026, 6, 26);
@@ -630,7 +642,12 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     if (pinCallback) pinCallback(pin);
     hidePinModal();
   });
-  document.getElementById("pin-cancel").addEventListener("click", hidePinModal);
+  document.getElementById("pin-cancel").addEventListener("click", function() {
+    hidePinModal();
+    document.getElementById("login-select").value = "";
+    currentUser = null;
+    setLoggedIn(false);
+  });
 
   // --- Admin Modal ---
   var adminCallback = null;
@@ -668,11 +685,9 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       if (view === "dashboard" || view === "manage") {
         if (!adminUnlocked) { showAdminModal(function() { switchView(view); }); return; }
       }
-      // My Leave requires user selection
+      // My Leave requires being logged in
       if (view === "myleave") {
-        var login = document.getElementById("login-select").value;
-        if (!login) { showToast("Select your login first", true); return; }
-        currentUser = login;
+        if (!currentUser) { showToast("Select your login first", true); return; }
       }
       switchView(view);
     });
@@ -721,34 +736,32 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   }
 
   // Re-render day grid when user changes
-  document.getElementById("login-select").addEventListener("change", function() { renderDayGrid(); });
-
-  document.getElementById("submit-btn").addEventListener("click", function() {
-    var login = document.getElementById("login-select").value;
-    if (!login) { showToast("Please select your login", true); return; }
-    var selected = document.querySelectorAll(".day-cell.selected");
-    if (selected.length === 0) { showToast("Please select at least one day", true); return; }
-
-    // Find the person
+  document.getElementById("login-select").addEventListener("change", function() {
+    var login = this.value;
+    if (!login) { currentUser = null; setLoggedIn(false); return; }
     var person = people.find(function(p) { return p.login === login; });
-    if (!person) { showToast("Login not found", true); return; }
+    if (!person) return;
 
-    // Check if person has a PIN set
     if (person.pin) {
-      // Verify PIN
-      showPinModal("Enter your PIN", "Confirm your identity to submit leave", "verify", function(pin) {
-        if (pin === person.pin) { doSubmitLeave(login); }
-        else { showToast("Incorrect PIN", true); }
+      showPinModal("Enter your PIN", "Hi " + login + " — enter your 4-digit PIN", "verify", function(pin) {
+        if (pin === person.pin) { currentUser = login; setLoggedIn(true); showToast("Logged in as " + login, false); }
+        else { showToast("Incorrect PIN", true); document.getElementById("login-select").value = ""; currentUser = null; setLoggedIn(false); }
       });
     } else {
-      // First time - set PIN
-      showPinModal("Create your PIN", "Set a 4-digit PIN to protect your account", "create", function(pin) {
+      showPinModal("Create your PIN", "Hi " + login + " — set a 4-digit PIN to protect your account", "create", function(pin) {
         apiCall({ action: "setPin", login: login, pin: pin }, function(res) {
-          if (res && res.success) { person.pin = pin; doSubmitLeave(login); }
-          else { showToast("Failed to set PIN", true); }
+          if (res && res.success) { person.pin = pin; currentUser = login; setLoggedIn(true); showToast("PIN set! Logged in as " + login, false); }
+          else { showToast("Failed to set PIN", true); document.getElementById("login-select").value = ""; setLoggedIn(false); }
         });
       });
     }
+  });
+
+  document.getElementById("submit-btn").addEventListener("click", function() {
+    if (!currentUser) { showToast("Please select your login first", true); return; }
+    var selected = document.querySelectorAll(".day-cell.selected");
+    if (selected.length === 0) { showToast("Please select at least one day", true); return; }
+    doSubmitLeave(currentUser);
   });
 
   function doSubmitLeave(login) {
@@ -794,14 +807,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     for (var j = 0; j < cancelBtns.length; j++) {
       cancelBtns[j].addEventListener("click", function() {
         var dateToCancel = this.getAttribute("data-date");
-        var person = people.find(function(p) { return p.login === login; });
-
-        if (person && person.pin) {
-          showPinModal("Enter your PIN", "Confirm to cancel this leave day", "verify", function(pin) {
-            if (pin === person.pin) { doCancelLeave(login, dateToCancel); }
-            else { showToast("Incorrect PIN", true); }
-          });
-        } else { doCancelLeave(login, dateToCancel); }
+        doCancelLeave(login, dateToCancel);
       });
     }
   }
@@ -909,7 +915,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 
   // --- INIT ---
   selectedWeek = getCurrentWeek(); dashWeek = getCurrentWeek();
-  buildWeekTabs(); renderDayGrid();
+  buildWeekTabs(); setLoggedIn(false);
   if (API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") { loadData(); }
 })();
 </script>
