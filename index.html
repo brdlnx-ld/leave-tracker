@@ -637,7 +637,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 (function() {
   // ======== CONFIG — SET YOUR GOOGLE APPS SCRIPT URL HERE ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbx62amOxHK-pMdlA1pf0JgOVqmyvupWfAY9iD5sUSviUqJ4iImzbMkUuggnOUliyxSW/exec";
+  var API_URL = "https://script.google.com/macros/s/AKfycbywTlRvx-JsN51z5QeAy7iMsP1hHu6YiIIuZdIAjhraDnWdTwAtqVq8CTv7GeFJAR_s/exec";
   // ===============================================================
 
   var people = [];
@@ -697,17 +697,26 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   }
 
   function loadData() {
+    var loaded = 0;
+    function checkReady() {
+      loaded++;
+      if (loaded >= 2) {
+        populateLoginSelect();
+        renderPeopleList();
+        renderDashboard();
+      }
+    }
     apiCall({ action: "getPeople" }, function(res) {
       if (res && res.people) {
         people = res.people;
-        populateLoginSelect();
-        renderPeopleList();
       }
+      checkReady();
     });
     apiCall({ action: "getLeave" }, function(res) {
       if (res && res.leave) {
         leaveData = res.leave;
       }
+      checkReady();
     });
   }
 
