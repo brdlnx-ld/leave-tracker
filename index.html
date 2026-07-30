@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en"><head><style id="qw-theme">:root {
+  --color-bg: #f2f1f4;
+  --color-text: #352f3d;
+  --color-navbar-bg: #eae8ed;
+  --color-bg-chat-view: #fcfcfd;
+  --color-bg-secondary: #fff;
+  --color-bg-tertiary: #eae8ed;
+  --color-bg-hover: #dcdadf;
+  --color-surface: #eae8ed;
+  --color-surface-hover: #dcdadf;
+  --color-surface-active: #c1bec6;
+  --color-border: #c1bec6;
+  --color-border-light: #dcdadf;
+  --color-border-strong: #c1bec6;
+  --color-primary: #4200db;
+  --color-primary-dark: #35009e;
+  --color-primary-light: #8575ff;
+  --color-primary-bg: #e8e6ff;
+  --color-primary-hover-border: #35009e;
+  --color-nav-icon-active: #4200db;
+  --color-nav-hover-border: #4200db;
+  --color-primary-alpha-3: color-mix(in srgb, #4200db 3%, transparent);
+  --color-primary-alpha-5: color-mix(in srgb, #4200db 5%, transparent);
+  --color-primary-alpha-8: color-mix(in srgb, #4200db 8%, transparent);
+  --color-primary-alpha-12: color-mix(in srgb, #4200db 12%, transparent);
+  --color-primary-alpha-15: color-mix(in srgb, #4200db 15%, transparent);
+  --color-primary-alpha-20: color-mix(in srgb, #4200db 20%, transparent);
+  --color-primary-alpha-25: color-mix(in srgb, #4200db 25%, transparent);
+  --color-primary-alpha-30: color-mix(in srgb, #4200db 30%, transparent);
+  --color-primary-alpha-40: color-mix(in srgb, #4200db 40%, transparent);
+  --color-primary-alpha-50: color-mix(in srgb, #4200db 50%, transparent);
+  --color-primary-alpha-60: color-mix(in srgb, #4200db 60%, transparent);
+  --color-primary-subtle: color-mix(in srgb, #4200db 18%, transparent);
+  --color-primary-border: #8575ff;
+  --color-focus-ring: color-mix(in srgb, #4200db 50%, transparent);
+  --color-sidebar-hover: color-mix(in srgb, #4200db 12%, transparent);
+  --block-hover-outline: 1px dashed color-mix(in srgb, #4200db 50%, transparent);
+  --block-selected-outline: 1px solid #8575ff;
+  --block-selection-outline-offset: 2px;
+  --block-selected-halo: 0 0 8px color-mix(in srgb, #4200db 40%, transparent);
+  --color-accent: #4200db;
+  --color-accent-foreground: #4200db;
+  --color-accent-dark: #35009e;
+  --color-accent-light: #e8e6ff;
+  --color-accent-inverse: #fff;
+  --color-link: #4200db;
+  --color-primary-gradient-end: #e8e6ff;
+  --color-primary-bg-solid: #eae8ed;
+  --color-user-bubble: #f3f3f7;
+  --color-user-bubble-text: #352f3d;
+  --color-text-secondary: #5e5966;
+  --color-text-tertiary: #7a7582;
+  --color-text-muted: #938f9b;
+  --color-text-on-primary: #f2f1f4;
+  --color-success: #00802f;
+  --color-success-dark: #00471e;
+  --color-success-light: #d9ffd6;
+  --color-success-hover: #005c26;
+  --color-success-bg: #e6f4eb;
+  --color-success-border: #c4dccb;
+  --color-success-foreground: #00802f;
+  --color-success-dark-foreground: #00471e;
+  --color-success-text: #00471e;
+  --color-error: #db0000;
+  --color-error-dark: #700000;
+  --color-error-light: #ffe0e0;
+  --color-error-hover: #ffe0e0;
+  --color-error-bg: #fbe9ea;
+  --color-error-border: #eecbcd;
+  --color-error-active-border: #db0000;
+  --color-error-foreground: #db0000;
+  --color-error-dark-foreground: #700000;
+  --color-error-inverse: #fff;
+  --color-error-text: #700000;
+  --color-warning: #f2b100;
+  --color-warning-dark: #573a00;
+  --color-warning-light: #fffbbd;
+  --color-warning-hover: #db9200;
+  --color-warning-bg: #fdf6e4;
+  --color-warning-border: #f5dda6;
+  --color-warning-foreground: #f2b100;
+  --color-warning-dark-foreground: #573a00;
+  --color-warning-inverse: #573a00;
+  --color-surface-warning: #fffbbd;
+  --color-text-warning: #573a00;
+  --color-info: #006ce0;
+  --color-info-dark: #002a66;
+  --color-info-light: #d1f1ff;
+  --color-info-hover: #003b8f;
+  --color-info-bg: #e6f0fb;
+  --color-info-border: #c0d5ec;
+  --color-info-foreground: #006ce0;
+  --color-info-dark-foreground: #002a66;
+  --color-info-inverse: #fff;
+  --color-overlay: #dcdadf80;
+  --color-shadow: #352f3d40;
+  --color-hover: #352f3d0d;
+  --color-tooltip-bg: #eae8ed;
+  --color-tooltip-text: #352f3d;
+  --color-voice-purple: #8575ff;
+  --color-voice-purple-dark: #4200db;
+  --color-voice-purple-light: #8575ff;
+  --color-voice-red: #db0000;
+  --color-voice-red-dark: #700000;
+  --color-voice-amber: #f2b100;
+  --color-voice-purple-glow: #4200db66;
+  --color-voice-red-glow: #db000066;
+  --font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Monaco", "Menlo", "Consolas", monospace;
+  --text-2xs: .5625rem;
+  --text-xs: .625rem;
+  --text-sm: .6875rem;
+  --text-base: .75rem;
+  --text-md: .8125rem;
+  --text-lg: .875rem;
+  --text-xl: 1rem;
+  --text-2xl: 1.125rem;
+  --text-3xl: 1.25rem;
+  --text-4xl: 1.5rem;
+  --text-5xl: 2rem;
+  --spacing-1: calc(.25rem * 1);
+  --spacing-1-5: calc(.25rem * 1.5);
+  --spacing-2: calc(.25rem * 2);
+  --spacing-3: calc(.25rem * 3);
+  --spacing-4: calc(.25rem * 4);
+  --spacing-5: calc(.25rem * 5);
+  --spacing-6: calc(.25rem * 6);
+  --spacing-7: calc(.25rem * 7);
+  --spacing-8: calc(.25rem * 8);
+  --spacing-9: calc(.25rem * 9);
+  --spacing-10: calc(.25rem * 10);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-card: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 8px;
+  --shadow-sm: 0 1px 2px #352f3d0f;
+  --shadow-md: 0 4px 12px #352f3d1a;
+  --color-success-bg-solid: #d9ffd6;
+  --color-error-bg-solid: #ffe0e0;
+  --color-error-border-solid: #ffe0e0;
+  --color-warning-bg-solid: #fffbbd;
+  --color-warning-text: #573a00;
+  --color-info-bg-solid: #d1f1ff;
+  --color-info-bg-solid-alt: #d1f1ff;
+  --color-info-text: #002a66;
+  --color-info-text-alt: #002a66;
+  --color-emerald: #367c53;
+  --color-teal: #0c9aa7;
+  --color-code-bg: #eae8ed;
+  --color-code-header-bg: #dcdadf;
+  --color-code-text: #352f3d;
+  --color-code-border: #c1bec6;
+  --color-code-muted: #5e5966;
+  --color-inline-code-bg: #eae8ed;
+  --color-inline-code-text: #352f3d;
+  --color-inline-code-border: #c1bec6;
+  --color-scrollbar-thumb: #c1bec6;
+  --color-scrollbar-track: transparent;
+  --color-graph-node-text: #352f3d;
+  --color-graph-node-text-dim: #938f9b;
+  --color-graph-edge-default: #938f9b;
+  --color-graph-edge-cross: #d08025;
+  --color-graph-edge-text: #5e5966;
+  --color-graph-edge-stroke: #f2f1f4;
+  --color-graph-highlight-bg: #ff6b6b;
+  --color-graph-highlight-border: #e74c3c;
+  --color-graph-search-bg: gold;
+  --color-graph-search-border: orange;
+  --color-graph-focus-border: #c0392b;
+  --color-graph-external-border: #938f9b;
+  --color-graph-cat-file: #3878b0;
+  --color-graph-cat-folder: #5e5966;
+  --color-graph-cat-file-aggregate: #2d6a9f;
+  --color-graph-cat-class: #7138cc;
+  --color-graph-cat-function: #367c53;
+  --color-graph-cat-method: #0c9aa7;
+  --color-graph-cat-variable: #d08025;
+  --color-graph-cat-import: #b06a1a;
+  --color-graph-cat-module: #5e35a8;
+  --color-graph-cat-concept: #933;
+  --color-graph-cat-person: #c44d4d;
+  --color-graph-cat-org: #0c9aa7;
+  --color-graph-cat-organization: #0c9aa7;
+  --color-graph-cat-product: #8e47ff;
+  --color-graph-cat-metric: #c44d78;
+  --color-graph-cat-location: #34495e;
+  --color-graph-cat-date: #b34d8a;
+  --color-graph-cat-code: #3878b0;
+  --color-graph-cat-doc: #5e5966;
+  --color-graph-cat-url: #367c53;
+  --color-graph-cat-email: #5e35a8;
+  --color-graph-cat-unknown: #938f9b;
+  --color-graph-rel-contains: #938f9b;
+  --color-graph-rel-extends: #7138cc;
+  --color-graph-rel-implements: #3878b0;
+  --color-graph-rel-imports: #d08025;
+  --color-graph-rel-uses: #367c53;
+  --color-graph-rel-calls: #367c53;
+  --color-graph-rel-references: #d08025;
+  --color-graph-rel-related-to: #938f9b;
+  --color-graph-rel-works-on: #933;
+  --color-graph-rel-owns: #0c9aa7;
+  --color-graph-rel-depends-on: #b06a1a;
+  --color-graph-rel-parent-of: #938f9b;
+  --qs-content: #fff;
+  --qs-main: #fff;
+  --qs-primary-foreground: #131920;
+  --qs-secondary-foreground: #656871;
+  --qs-tertiary-foreground: #938f9b;
+  --qs-placeholder-foreground: #8c8c94;
+  --qs-divider: #dedee3;
+  --qs-default-border: #8c8c94;
+  --qs-neutral-soft: #b4b4bb;
+  --qs-neutral-gray-50: #eae8ed;
+  --qs-tertiary-background: #eae8ed;
+  --qs-action-hover: #f3f3f7;
+  --qs-primary-default: #4200db;
+  --qs-primary-dark: #35009e;
+  --qs-primary-light: #e8e6ff;
+  --qs-success-default: #00802f;
+  --qs-error-default: #db0000;
+  --qs-font-sans: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;
+  --safe-top: 0px;
+  --safe-bottom: 0px;
+  --safe-left: 0px;
+  --safe-right: 0px;
+  --qs-font-family: "Amazon Ember", "Helvetica Neue", "Segoe UI", Helvetica, Arial, sans-serif;
+  --qs-font-base-letter-spacing: .15px;
+  --qs-shadow-sm: 0 0 2px 0 #00000029, 0 0 4px 0 #00000029;
+  --qs-shadow-md: 0 0 2px 0 #00000029, 0 2px 8px 1px #00000029;
+  --qs-shadow-lg: 0 4px 16px 4px #00000029, 0 2px 6px 1px #00000029;
+  --qs-shadow-xl: 0 4px 8px 2px #00000029, 0 6px 20px 4px #00000029;
+  --qs-width-modal-sm: 384px;
+  --qs-width-modal-md: 600px;
+  --qs-width-modal-lg: 1136px;
+  --qs-grid-gap: 16px;
+  --qs-grid-gap-xl: 24px;
+  --qs-primary-medium: #8575ff;
+  --qs-primary-inverse: #fff;
+  --qs-neutral-lightest: #f9f9fb;
+  --qs-neutral-light: #f3f3f7;
+  --qs-neutral-default: #dedee3;
+  --qs-neutral-medium: #8c8c94;
+  --qs-neutral-deep: #656871;
+  --qs-neutral-dark: #333843;
+  --qs-neutral-strong: #131920;
+  --qs-neutral-white: #fff;
+  --qs-neutral-black: #000;
+  --qs-success-medium: #005c26;
+  --qs-success-dark: #00471e;
+  --qs-success-light: #d9ffd6;
+  --qs-success-inverse: #fff;
+  --qs-info-default: #006ce0;
+  --qs-info-medium: #003b8f;
+  --qs-info-dark: #002a66;
+  --qs-info-light: #d1f1ff;
+  --qs-info-inverse: #fff;
+  --qs-warning-default: #f2b100;
+  --qs-warning-medium: #db9200;
+  --qs-warning-dark: #573a00;
+  --qs-warning-light: #fffbbd;
+  --qs-warning-inverse: #573a00;
+  --qs-warning-experimental: #f2b100;
+  --qs-warning-experimental-light: #fffbbd;
+  --qs-warning-experimental-light-foreground: #fffbbd;
+  --qs-error-medium: #900;
+  --qs-error-dark: #700000;
+  --qs-error-light: #ffe0e0;
+  --qs-error-inverse: #fff;
+  --qs-connection-default: #db3300;
+  --qs-connection-soft: #ff997a;
+  --qs-connection-light: #ffe0d6;
+  --qs-connection-dark: #661800;
+  --qs-automation-default: #b3008f;
+  --qs-automation-medium: #d600ba;
+  --qs-automation-soft: #ff94f1;
+  --qs-automation-light: #ffe0fb;
+  --qs-automation-dark: #660052;
+  --qs-insight-default: #a000b8;
+  --qs-insight-soft: #f299ff;
+  --qs-insight-light: #fce6ff;
+  --qs-insight-dark: #590066;
+  --qs-visualization-default: #7300e5;
+  --qs-visualization-soft: #d4a8ff;
+  --qs-visualization-light: #f2e5ff;
+  --qs-visualization-dark: #45008a;
+  --qs-spice: #ff9800;
+  --qs-coachmark: #006ce0;
+  --qs-brand: #fff;
+  --qs-brand-foreground: #131920;
+  --qs-brand-navbar: #131920;
+  --qs-brand-navbar-foreground: #fff;
+  --qs-brand-navbar-light: #dedee3;
+  --qs-brand-navbar-dark: #000;
+  --qs-application-navbar: #4200db;
+  --qs-application-navbar-foreground: #fff;
+  --qs-application-navbar-light: #e8e6ff;
+  --qs-application-navbar-dark: #35009e;
+  --qs-dimension: #4200db;
+  --qs-dimension-foreground: #fff;
+  --qs-dimension-experimental: #4200db;
+  --qs-dimension-experimental-foreground: #4200db;
+  --qs-measure: #00802f;
+  --qs-measure-foreground: #fff;
+  --qs-measure-experimental: #f2b100;
+  --qs-measure-experimental-foreground: #f2b100;
+  --qs-content-inverse: #333843;
+  --qs-content-inverse-active: #131920;
+  --qs-secondary: #dedee3;
+  --qs-disabled: #8c8c94;
+  --qs-divider-light: #f3f3f7;
+  --qs-hover-border: #333843;
+  --qs-active-border: #4200db;
+  --qs-disabled-border: #dedee3;
+  --qs-error-border: #ffe0e0;
+  --qs-error-active-border: #db0000;
+  --qs-disabled-foreground: #b4b4bb;
+  --qs-primary-inverse-foreground: #fff;
+  --qs-error-foreground: #db0000;
+  --qs-contrast-foreground: #131920;
+  --qs-main-foreground: #131920;
+  --qs-main-secondary-foreground: #656871;
+  --qs-action-disabled: #f3f3f7;
+  --qs-action-active: #e8e6ff;
+  --qs-default-badge: #dedee3;
+  --qs-tag-default: #dedee3;
+  --qs-tag-soft-border: #b4b4bb;
+  --qs-focus-offset: 1px;
+  --qs-toggle-tile-sm: calc(.25rem * 8);
+  --qs-toggle-tile-md: calc(.25rem * 12);
+  --qs-toggle-tile-lg: calc(.25rem * 15);
+  --qs-shadow-pin-right: inset 4px 0 4px -4px #00000029;
+  --qs-shadow-pin-left: inset -4px 0 4px -4px #00000029;
+  --react-pdf-text-layer: 1;
+  --highlight-bg-color: #b400aa;
+  --highlight-selected-bg-color: #006400;
+  --react-pdf-annotation-layer: 1;
+  --annotation-unfocused-field-background: url("data:image/svg+xml;charset=UTF-8,<svg width='1px' height='1px' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' style='fill:rgba(0, 54, 255, 0.13);'/></svg>");
+  --input-focus-border-color: Highlight;
+  --input-focus-outline: 1px solid Canvas;
+  --input-unfocused-border-color: transparent;
+  --input-disabled-border-color: transparent;
+  --input-hover-border-color: black;
+  --link-outline: none;
+  color-scheme: light;
+}
+body { background: var(--color-bg); color: var(--color-text); }
+a { color: var(--color-link, var(--color-primary)); }</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LCY8 Leave Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="manifest" href="manifest.json">
+<style>
+:root {
+  --primary: #0052CC;
+  --primary-light: #e3f2fd;
+  --success: #36b37e;
+  --error: #de350b;
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --text: #172b4d;
+  --text-secondary: #44546f;
+  --text-muted: #8993a4;
+  --border: #dfe1e6;
+  --border-light: #ebecf0;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+.header {
+  background: var(--primary);
+  color: white;
+  padding: 20px 16px 16px;
+  text-align: center;
+}
+.header h1 { font-size: 18px; font-weight: 700; }
+.header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
+.nav-item.active { color: var(--primary); }
+
+/* Views */
+.view { display: none; padding: 16px; }
+.view.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.card-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+
+/* Form elements */
+select, input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  background: var(--surface);
+  color: var(--text);
+  appearance: none;
+  -webkit-appearance: none;
+}
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238993a4' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+/* Week selector */
+.week-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
+.week-tabs { display: flex; gap: 8px; padding-bottom: 12px; min-width: max-content; }
+.week-tab {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--border-light);
+  color: var(--text-secondary);
+  border: none;
+}
+.week-tab.active { background: var(--primary); color: white; }
+
+/* Day grid */
+.day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
+.day-cell {
+  text-align: center;
+  padding: 10px 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.day-cell .day-name { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+.day-cell .day-date { font-size: 14px; font-weight: 600; margin-top: 2px; }
+.day-cell.weekend { opacity: 0.4; }
+.day-cell.selected { background: var(--primary); border-color: var(--primary); }
+.day-cell.selected .day-name, .day-cell.selected .day-date { color: white; }
+.day-cell:not(.selected) { background: var(--bg); }
+.day-cell:not(.selected):active { background: var(--border-light); }
+
+/* Submit button */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+}
+.btn-primary:active { opacity: 0.9; }
+.btn-primary:disabled { opacity: 0.5; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 16px;
+  right: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  display: none;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Dashboard */
+.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.stat-box { background: var(--surface); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.stat-box .num { font-size: 22px; font-weight: 700; color: var(--primary); }
+.stat-box .label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+.filter-row { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; }
+.filter-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--border-light);
+  color: var(--text-secondary);
+  border: none;
+}
+.filter-chip.active { background: var(--primary); color: white; }
+
+.leave-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.leave-row:last-child { border-bottom: none; }
+.leave-name { flex: 1; font-size: 13px; font-weight: 500; }
+.leave-role { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-right: 8px; }
+.leave-role.sm { background: #e8f5e9; color: #2e7d32; }
+.leave-role.pi { background: #fff3e0; color: #e65100; }
+.leave-role.sme { background: #f3e5f5; color: #6a1b9a; }
+.leave-days { display: flex; gap: 2px; }
+.leave-dot {
+  width: 20px; height: 20px;
+  border-radius: 4px;
+  font-size: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.leave-dot.on { background: var(--primary-light); color: #1565c0; }
+.leave-dot.off { background: var(--border-light); color: transparent; }
+.leave-dot.today-marker { outline: 2px solid var(--primary); }
+
+/* Manage */
+.person-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.person-row:last-child { border-bottom: none; }
+.person-info { flex: 1; }
+.person-login { font-size: 14px; font-weight: 500; }
+.person-role { font-size: 11px; color: var(--text-muted); }
+.remove-btn { background: none; border: none; color: var(--error); font-size: 18px; cursor: pointer; padding: 8px; }
+
+/* Loading */
+.loading { text-align: center; padding: 40px; color: var(--text-muted); }
+.loading i { font-size: 24px; margin-bottom: 8px; display: block; }
+
+/* Status indicator */
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.status-dot.online { background: var(--success); }
+.status-dot.offline { background: var(--error); }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1><i class="fa-solid fa-calendar-check"></i> LCY8 Leave Tracker</h1>
+  <p>Smile Makers | Process Instructors | SMEs</p>
+</div>
+<div id="toast" class="toast"></div>
+
+<!-- SUBMIT VIEW -->
+<div id="view-submit" class="view active">
+  <div class="card">
+    <div class="card-title">Who are you?</div>
+    <select id="login-select"><option value="">Select your login...</option></select>
+  </div>
+  <div class="card">
+    <div class="card-title">Select week</div>
+    <div class="week-scroll"><div class="week-tabs" id="week-tabs"></div></div>
+    <div class="day-grid" id="day-grid"></div>
+  </div>
+  <button class="btn-primary" id="submit-btn"><i class="fa-solid fa-paper-plane"></i> Submit Leave</button>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div id="view-dashboard" class="view">
+  <div class="stat-row" id="stats"></div>
+  <div class="card">
+    <div class="card-title">Week View</div>
+    <div class="week-scroll"><div class="week-tabs" id="dash-week-tabs"></div></div>
+    <div class="filter-row" id="dash-filters"></div>
+    <div id="dash-list"></div>
+  </div>
+</div>
+
+<!-- MANAGE VIEW -->
+<div id="view-manage" class="view">
+  <div class="card">
+    <div class="card-title">Add Team Member</div>
+    <input type="text" id="new-login" placeholder="Login (e.g. jsmith)" style="margin-bottom:8px;">
+    <select id="new-role">
+      <option value="SM">Smile Maker</option>
+      <option value="PI">Process Instructor</option>
+      <option value="SME">SME</option>
+    </select>
+    <button class="btn-primary" id="add-btn" style="margin-top:12px;"><i class="fa-solid fa-plus"></i> Add Person</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Team Members</div>
+    <div id="people-list"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" data-view="submit"><i class="fa-solid fa-pen-to-square"></i>Submit</div>
+  <div class="nav-item" data-view="dashboard"><i class="fa-solid fa-chart-bar"></i>Dashboard</div>
+  <div class="nav-item" data-view="manage"><i class="fa-solid fa-users-gear"></i>Manage</div>
+</div>
+
+<script>
+(function() {
+  // ======== CONFIG — SET YOUR GOOGLE APPS SCRIPT URL HERE ========
+  var API_URL = "https://script.google.com/macros/s/AKfycbyKuQRY9iTYi3O3dHF4RlDaTv1tlYzk96RTbyn_j9lvbHb5_Y5LkvoC9y1mKi9GWLZG/exec";
+  // ===============================================================
+
+  var people = [];
+  var leaveData = {};
+  var selectedWeek = 31;
+  var dashWeek = 31;
+  var activeFilter = "all";
+  var DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var WEEK_31_START = new Date(2026, 6, 26);
+
+  // --- Date helpers ---
+  function dateKey(d) {
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function shortDate(d) { return d.getDate() + " " + MONTHS[d.getMonth()]; }
+  function getWeekStart(wk) {
+    var d = new Date(WEEK_31_START.getTime());
+    d.setDate(d.getDate() + (wk - 31) * 7);
+    return d;
+  }
+  function getWeekDays(wk) {
+    var start = getWeekStart(wk);
+    var days = [];
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(start.getTime());
+      d.setDate(d.getDate() + i);
+      days.push({ date: d, name: DAY_NAMES[i], key: dateKey(d) });
+    }
+    return days;
+  }
+  function getCurrentWeek() {
+    var diff = Math.floor((new Date() - WEEK_31_START) / 86400000);
+    return 31 + Math.floor(diff / 7);
+  }
+  function getWeeks() {
+    var cw = getCurrentWeek();
+    var arr = [];
+    for (var i = 0; i < 8; i++) arr.push(cw + i);
+    return arr;
+  }
+
+  // --- API calls ---
+  function apiGet(action, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", API_URL + "?action=" + action, true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try { callback(JSON.parse(xhr.responseText)); } catch(e) { callback(null); }
+      } else { callback(null); }
+    };
+    xhr.onerror = function() { callback(null); };
+    xhr.send();
+  }
+
+  function apiPost(data, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", API_URL, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try { callback(JSON.parse(xhr.responseText)); } catch(e) { callback(null); }
+      } else { callback(null); }
+    };
+    xhr.onerror = function() { callback(null); };
+    xhr.send(JSON.stringify(data));
+  }
+
+  function loadData() {
+    apiGet("getPeople", function(res) {
+      if (res && res.people) {
+        people = res.people;
+        populateLoginSelect();
+        renderPeopleList();
+      }
+    });
+    apiGet("getLeave", function(res) {
+      if (res && res.leave) {
+        leaveData = res.leave;
+      }
+    });
+  }
+
+  // --- Toast ---
+  function showToast(msg, isError) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.background = isError ? "#de350b" : "#36b37e";
+    t.style.display = "block";
+    setTimeout(function() { t.style.display = "none"; }, 3000);
+  }
+
+  // --- Navigation ---
+  var navItems = document.querySelectorAll(".nav-item");
+  for (var i = 0; i < navItems.length; i++) {
+    navItems[i].addEventListener("click", function() {
+      var view = this.getAttribute("data-view");
+      for (var j = 0; j < navItems.length; j++) navItems[j].classList.remove("active");
+      this.classList.add("active");
+      document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
+      document.getElementById("view-" + view).classList.add("active");
+      if (view === "dashboard") renderDashboard();
+      if (view === "manage") renderPeopleList();
+      if (view === "submit") { buildWeekTabs(); renderDayGrid(); populateLoginSelect(); }
+    });
+  }
+
+  // --- Submit View ---
+  function populateLoginSelect() {
+    var sel = document.getElementById("login-select");
+    var html = '<option value="">Select your login...</option>';
+    var sorted = people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
+    for (var i = 0; i < sorted.length; i++) {
+      html += '<option value="' + sorted[i].login + '">' + sorted[i].login + '</option>';
+    }
+    sel.innerHTML = html;
+  }
+
+  function buildWeekTabs() {
+    var weeks = getWeeks();
+    var container = document.getElementById("week-tabs");
+    container.innerHTML = "";
+    for (var i = 0; i < weeks.length; i++) {
+      var tab = document.createElement("button");
+      tab.className = "week-tab" + (weeks[i] === selectedWeek ? " active" : "");
+      var days = getWeekDays(weeks[i]);
+      tab.textContent = "W" + weeks[i] + " (" + shortDate(days[0].date) + ")";
+      tab.setAttribute("data-week", weeks[i]);
+      tab.addEventListener("click", function() {
+        selectedWeek = parseInt(this.getAttribute("data-week"));
+        buildWeekTabs();
+        renderDayGrid();
+      });
+      container.appendChild(tab);
+    }
+  }
+
+  function renderDayGrid() {
+    var grid = document.getElementById("day-grid");
+    grid.innerHTML = "";
+    var days = getWeekDays(selectedWeek);
+    var today = dateKey(new Date());
+    for (var i = 0; i < days.length; i++) {
+      var cell = document.createElement("div");
+      var isWeekend = (days[i].name === "Sun" || days[i].name === "Sat");
+      cell.className = "day-cell" + (isWeekend ? " weekend" : "");
+      cell.setAttribute("data-key", days[i].key);
+      cell.innerHTML = '<div class="day-name">' + days[i].name + '</div><div class="day-date">' + days[i].date.getDate() + '</div>';
+      if (days[i].key === today) cell.style.border = "2px solid var(--primary)";
+      cell.addEventListener("click", function() { this.classList.toggle("selected"); });
+      grid.appendChild(cell);
+    }
+  }
+
+  document.getElementById("submit-btn").addEventListener("click", function() {
+    var login = document.getElementById("login-select").value;
+    if (!login) { showToast("Please select your login", true); return; }
+    var selected = document.querySelectorAll(".day-cell.selected");
+    if (selected.length === 0) { showToast("Please select at least one day", true); return; }
+    var dates = [];
+    for (var i = 0; i < selected.length; i++) dates.push(selected[i].getAttribute("data-key"));
+
+    var btn = document.getElementById("submit-btn");
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
+
+    apiPost({ action: "submitLeave", login: login, dates: dates }, function(res) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Leave';
+      if (res && res.success) {
+        if (!leaveData[login]) leaveData[login] = [];
+        for (var i = 0; i < dates.length; i++) {
+          if (leaveData[login].indexOf(dates[i]) === -1) leaveData[login].push(dates[i]);
+        }
+        document.querySelectorAll(".day-cell.selected").forEach(function(c) { c.classList.remove("selected"); });
+        showToast("Leave submitted! (" + dates.length + " days)", false);
+      } else {
+        showToast("Failed to submit. Check connection.", true);
+      }
+    });
+  });
+
+  // --- Dashboard ---
+  function buildDashWeekTabs() {
+    var weeks = getWeeks();
+    var container = document.getElementById("dash-week-tabs");
+    container.innerHTML = "";
+    for (var i = 0; i < weeks.length; i++) {
+      var tab = document.createElement("button");
+      tab.className = "week-tab" + (weeks[i] === dashWeek ? " active" : "");
+      tab.textContent = "W" + weeks[i];
+      tab.setAttribute("data-week", weeks[i]);
+      tab.addEventListener("click", function() {
+        dashWeek = parseInt(this.getAttribute("data-week"));
+        renderDashboard();
+      });
+      container.appendChild(tab);
+    }
+  }
+
+  function renderDashboard() {
+    var today = dateKey(new Date());
+    var weeks = getWeeks();
+    var currentWk = getCurrentWeek();
+
+    // Stats
+    var onLeaveToday = 0;
+    var leaveDaysThisWeek = 0;
+    var thisWeekDays = getWeekDays(currentWk);
+    for (var p = 0; p < people.length; p++) {
+      var pLeave = leaveData[people[p].login] || [];
+      if (pLeave.indexOf(today) !== -1) onLeaveToday++;
+      for (var d = 0; d < thisWeekDays.length; d++) {
+        if (pLeave.indexOf(thisWeekDays[d].key) !== -1) leaveDaysThisWeek++;
+      }
+    }
+    document.getElementById("stats").innerHTML =
+      '<div class="stat-box"><div class="num">' + onLeaveToday + '</div><div class="label">Off Today</div></div>' +
+      '<div class="stat-box"><div class="num">' + leaveDaysThisWeek + '</div><div class="label">Days This Wk</div></div>' +
+      '<div class="stat-box"><div class="num">' + people.length + '</div><div class="label">People</div></div>';
+
+    buildDashWeekTabs();
+
+    // Filters
+    var filtersEl = document.getElementById("dash-filters");
+    filtersEl.innerHTML = "";
+    var opts = [{k:"all",l:"All"},{k:"SM",l:"SM"},{k:"PI",l:"PI"},{k:"SME",l:"SME"}];
+    for (var f = 0; f < opts.length; f++) {
+      var chip = document.createElement("button");
+      chip.className = "filter-chip" + (activeFilter === opts[f].k ? " active" : "");
+      chip.textContent = opts[f].l;
+      chip.setAttribute("data-filter", opts[f].k);
+      chip.addEventListener("click", function() {
+        activeFilter = this.getAttribute("data-filter");
+        renderDashboard();
+      });
+      filtersEl.appendChild(chip);
+    }
+
+    // List
+    var filtered = [];
+    for (var i = 0; i < people.length; i++) {
+      if (activeFilter === "all" || people[i].role === activeFilter) filtered.push(people[i]);
+    }
+    filtered.sort(function(a,b) { return a.login.localeCompare(b.login); });
+
+    var listEl = document.getElementById("dash-list");
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div class="loading"><i class="fa-solid fa-users"></i><p>No people added yet</p></div>';
+      return;
+    }
+
+    var days = getWeekDays(dashWeek);
+    var html = '<div style="display:flex;gap:2px;justify-content:flex-end;margin-bottom:8px;padding-right:4px;">';
+    for (var dh = 0; dh < 7; dh++) {
+      html += '<div style="width:20px;text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">' + days[dh].name.charAt(0) + '</div>';
+    }
+    html += '</div>';
+
+    for (var r = 0; r < filtered.length; r++) {
+      var person = filtered[r];
+      var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme";
+      html += '<div class="leave-row"><div class="leave-name">' + person.login + '</div><span class="leave-role ' + rc + '">' + person.role + '</span><div class="leave-days">';
+      var pLeave2 = leaveData[person.login] || [];
+      for (var d2 = 0; d2 < 7; d2++) {
+        var hasLeave = pLeave2.indexOf(days[d2].key) !== -1;
+        var isToday = days[d2].key === today;
+        html += '<div class="leave-dot ' + (hasLeave ? "on" : "off") + (isToday ? " today-marker" : "") + '">' + (hasLeave ? "AL" : "") + '</div>';
+      }
+      html += '</div></div>';
+    }
+    listEl.innerHTML = html;
+  }
+
+  // --- Manage ---
+  document.getElementById("add-btn").addEventListener("click", function() {
+    var login = document.getElementById("new-login").value.trim().toLowerCase();
+    var role = document.getElementById("new-role").value;
+    if (!login) { showToast("Please enter a login", true); return; }
+    for (var i = 0; i < people.length; i++) {
+      if (people[i].login === login) { showToast("Login already exists", true); return; }
+    }
+
+    apiPost({ action: "addPerson", login: login, role: role }, function(res) {
+      if (res && res.success) {
+        people.push({ login: login, role: role });
+        document.getElementById("new-login").value = "";
+        renderPeopleList();
+        populateLoginSelect();
+        showToast("Added " + login, false);
+      } else {
+        showToast("Failed to add. Check connection.", true);
+      }
+    });
+  });
+
+  function renderPeopleList() {
+    var list = document.getElementById("people-list");
+    if (people.length === 0) {
+      list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members yet</p></div>';
+      return;
+    }
+    var sorted = people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
+    var html = "";
+    for (var i = 0; i < sorted.length; i++) {
+      var p = sorted[i];
+      var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
+      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + '</div></div><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
+    }
+    list.innerHTML = html;
+
+    var removeBtns = list.querySelectorAll(".remove-btn");
+    for (var j = 0; j < removeBtns.length; j++) {
+      removeBtns[j].addEventListener("click", function() {
+        var login = this.getAttribute("data-login");
+        apiPost({ action: "removePerson", login: login }, function(res) {
+          if (res && res.success) {
+            people = people.filter(function(p) { return p.login !== login; });
+            delete leaveData[login];
+            renderPeopleList();
+            populateLoginSelect();
+            showToast("Removed " + login, false);
+          }
+        });
+      });
+    }
+  }
+
+  // --- INIT ---
+  selectedWeek = getCurrentWeek();
+  dashWeek = getCurrentWeek();
+  buildWeekTabs();
+  renderDayGrid();
+
+  // Load data from API
+  if (API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+    loadData();
+  }
+})();
+</script>
+
+</body></html>
