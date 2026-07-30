@@ -988,6 +988,62 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     });
   });
 
+
+
+  // --- Manage ---
+  document.getElementById("add-btn").addEventListener("click", function() {
+    var login = document.getElementById("new-login").value.trim().toLowerCase();
+    var role = document.getElementById("new-role").value;
+    var shift = document.getElementById("new-shift").value;
+    if (!login) { showToast("Enter a login", true); return; }
+    if (people.find(function(p) { return p.login === login; })) { showToast("Already exists", true); return; }
+    var avail = getDayPickerValue("add-day-picker");
+    apiCall({ action: "addPerson", login: login, role: role, shift: shift, availability: avail }, function(res) {
+      if (res && res.success) { people.push({ login: login, role: role, shift: shift, availability: avail }); document.getElementById("new-login").value = ""; renderPeopleList(); populateLoginSelect(); showToast("Added " + login, false); }
+      else { showToast("Failed to add", true); }
+    });
+  });
+
+  function renderPeopleList() {
+    // Manage filters
+    var fe = document.getElementById("manage-filters"); 
+    if (!fe) return;
+    fe.innerHTML = "";
+    [{k:"all",l:"All"},{k:"DAYS",l:"Days"},{k:"TWI",l:"Twilight"},{k:"NIGHTS",l:"Nights"}].forEach(function(o) { var ch = document.createElement("button"); ch.className = "filter-chip" + (manageFilter === o.k ? " active" : ""); ch.textContent = o.l; ch.setAttribute("data-filter", o.k); ch.addEventListener("click", function() { manageFilter = this.getAttribute("data-filter"); renderPeopleList(); }); fe.appendChild(ch); });
+
+    var list = document.getElementById("people-list");
+    if (!list) return;
+    var filtered = people.filter(function(p) { return manageFilter === "all" || p.shift === manageFilter; });
+    if (filtered.length === 0) { list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members</p></div>'; return; }
+    var sorted = filtered.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
+    var html = "";
+    sorted.forEach(function(p) {
+      var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
+      var shiftLabel = p.shift || "No shift";
+      var availLabel = p.availability || "Not set";
+      var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
+      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + ' | ' + availLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="edit-person-btn" data-login="' + p.login + '" data-role="' + p.role + '" data-shift="' + (p.shift || "") + '" data-availability="' + (p.availability || "") + '" style="background:none;border:none;color:var(--primary);font-size:16px;cursor:pointer;padding:8px;"><i class="fa-solid fa-pen"></i></button><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
+    });
+    list.innerHTML = html;
+    list.querySelectorAll(".remove-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var login = this.getAttribute("data-login");
+        apiCall({ action: "removePerson", login: login }, function(res) {
+          if (res && res.success) { people = people.filter(function(p) { return p.login !== login; }); delete leaveData[login]; renderPeopleList(); populateLoginSelect(); showToast("Removed " + login, false); }
+        });
+      });
+    });
+    list.querySelectorAll(".edit-person-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var login = this.getAttribute("data-login");
+        var role = this.getAttribute("data-role");
+        var shift = this.getAttribute("data-shift");
+        var availability = this.getAttribute("data-availability");
+        showEditModal(login, role, shift, availability);
+      });
+    });
+  }
+
   // --- Edit Person ---
   var editLogin = null;
   function showEditModal(login, role, shift, availability) {
