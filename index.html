@@ -483,6 +483,20 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .on-leave-badge { background: #ffebee; color: #c62828; font-size: 9px; padding: 2px 6px; border-radius: 10px; }
 
 .assign-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--surface); color: var(--text); max-width: 160px; }
+
+/* Rota day cells */
+.rota-cell { min-height: 50px; background: var(--bg); border-radius: 6px; padding: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px solid var(--border-light); }
+.rota-cell.filled { background: var(--primary-light); border-color: var(--primary); }
+.rota-assigned { display: flex; align-items: center; gap: 2px; background: var(--surface); border-radius: 4px; padding: 2px 4px; font-size: 9px; width: 100%; justify-content: space-between; }
+.rota-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rota-remove { background: none; border: none; color: var(--error); cursor: pointer; font-size: 12px; font-weight: 700; padding: 0 2px; line-height: 1; }
+.rota-add-btn { background: none; border: 1px dashed var(--border); border-radius: 4px; color: var(--primary); cursor: pointer; font-size: 14px; font-weight: 700; width: 100%; padding: 2px 0; margin-top: auto; }
+.rota-add-btn:active { background: var(--primary-light); }
+
+/* Availability day picker */
+.day-picker { display: flex; gap: 4px; margin-top: 8px; margin-bottom: 8px; }
+.day-pick { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); background: var(--bg); color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.day-pick.active { background: var(--primary); border-color: var(--primary); color: white; }
 </style>
 </head>
 <body>
@@ -530,6 +544,16 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       <option value="TWI">Twilight</option>
       <option value="NIGHTS">Nights</option>
     </select>
+    <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-top:12px;margin-bottom:4px;">Working Days</label>
+    <div class="day-picker" id="edit-day-picker">
+      <button class="day-pick" data-day="Sun">S</button>
+      <button class="day-pick" data-day="Mon">M</button>
+      <button class="day-pick" data-day="Tue">T</button>
+      <button class="day-pick" data-day="Wed">W</button>
+      <button class="day-pick" data-day="Thu">T</button>
+      <button class="day-pick" data-day="Fri">F</button>
+      <button class="day-pick" data-day="Sat">S</button>
+    </div>
     <button class="modal-btn primary" id="edit-save">Save Changes</button>
     <button class="modal-btn secondary" id="edit-cancel">Cancel</button>
   </div>
@@ -576,14 +600,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="week-scroll"><div class="week-tabs" id="rota-week-tabs"></div></div>
     <div class="shift-tabs" id="rota-shift-tabs"></div>
   </div>
-  <div class="card">
-    <div class="card-title">Assign Sessions</div>
-    <div id="rota-sessions"></div>
-  </div>
-  <div class="card">
-    <div class="card-title" id="available-title">Available People</div>
-    <div id="available-list"></div>
-  </div>
+  <div id="rota-sessions"></div>
   <button class="btn-primary" id="save-rota-btn"><i class="fa-solid fa-floppy-disk"></i> Save Rota</button>
 </div>
 
@@ -602,6 +619,16 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       <option value="TWI">Twilight</option>
       <option value="NIGHTS">Nights</option>
     </select>
+    <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-top:12px;margin-bottom:4px;">Working Days</label>
+    <div class="day-picker" id="add-day-picker">
+      <button class="day-pick" data-day="Sun">S</button>
+      <button class="day-pick active" data-day="Mon">M</button>
+      <button class="day-pick active" data-day="Tue">T</button>
+      <button class="day-pick active" data-day="Wed">W</button>
+      <button class="day-pick active" data-day="Thu">T</button>
+      <button class="day-pick active" data-day="Fri">F</button>
+      <button class="day-pick" data-day="Sat">S</button>
+    </div>
     <button class="btn-primary" id="add-btn" style="margin-top:12px;"><i class="fa-solid fa-plus"></i> Add Person</button>
   </div>
   <div class="card">
@@ -623,7 +650,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 (function() {
   // ======== CONFIG ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbzPx_6GtNFOVaW64LF3rzByVdgEXMZjiiR33hjTMMOcNXG5-zX8lCjtUKvCwA5kr_wb/exec";
+  var API_URL = "https://script.google.com/macros/s/AKfycbyypVQbQLx9PvRb-4Nsh9ZS1rgVsjJCvRLc44XmoSVkwKsFb47lxIBLyCcZB6t0_Y-h/exec";
   var ADMIN_PIN = "1234";
   // =========================
 
@@ -802,78 +829,112 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   }
 
   // --- Rota Builder ---
-  function buildRotaWeekTabs() { var c = document.getElementById("rota-week-tabs"); c.innerHTML = ""; getWeeks().forEach(function(wk) { var t = document.createElement("button"); t.className = "week-tab" + (wk === rotaWeek ? " active" : ""); t.textContent = "W" + wk; t.setAttribute("data-week", wk); t.addEventListener("click", function() { rotaWeek = parseInt(this.getAttribute("data-week")); buildRotaWeekTabs(); loadRota(); }); c.appendChild(t); }); }
+  function buildRotaWeekTabs() { var c = document.getElementById("rota-week-tabs"); c.innerHTML = ""; getWeeks().forEach(function(wk) { var t = document.createElement("button"); t.className = "week-tab" + (wk === rotaWeek ? " active" : ""); var d = getWeekDays(wk); t.textContent = "W" + wk + " (" + shortDate(d[0].date) + ")"; t.setAttribute("data-week", wk); t.addEventListener("click", function() { rotaWeek = parseInt(this.getAttribute("data-week")); buildRotaWeekTabs(); loadRota(); }); c.appendChild(t); }); }
   function buildRotaShiftTabs() { var c = document.getElementById("rota-shift-tabs"); c.innerHTML = ""; ["DAYS","TWI","NIGHTS"].forEach(function(s) { var t = document.createElement("button"); t.className = "shift-tab" + (s === rotaShift ? " active" : ""); t.textContent = s === "TWI" ? "Twilight" : s.charAt(0) + s.slice(1).toLowerCase(); t.setAttribute("data-shift", s); t.addEventListener("click", function() { rotaShift = this.getAttribute("data-shift"); buildRotaShiftTabs(); loadRota(); }); c.appendChild(t); }); }
 
   function loadRota() {
     apiCall({ action: "getRota", week: rotaWeek, shift: rotaShift }, function(res) {
       rotaData = (res && res.assignments) ? res.assignments : [];
       renderRotaSessions();
-      renderAvailableList();
     });
   }
 
-  function getAvailablePeople() {
-    var weekDays = getWeekDays(rotaWeek);
-    return people.filter(function(p) {
-      if (p.shift !== rotaShift) return false;
-      // Check if on leave ALL week (still available if only off some days)
-      return true;
-    });
+  function getShiftPeople() {
+    return people.filter(function(p) { return p.shift === rotaShift; });
   }
 
   function getOnLeaveDays(login) {
     var weekDays = getWeekDays(rotaWeek);
     var pl = leaveData[login] || [];
-    var count = 0;
-    weekDays.forEach(function(d) { if (pl.indexOf(d.key) !== -1) count++; });
-    return count;
+    return weekDays.filter(function(d) { return pl.indexOf(d.key) !== -1; }).map(function(d) { return d.key; });
+  }
+
+  function isOnLeave(login, dayKey) {
+    var pl = leaveData[login] || [];
+    return pl.indexOf(dayKey) !== -1;
   }
 
   function renderRotaSessions() {
     var container = document.getElementById("rota-sessions");
+    var weekDays = getWeekDays(rotaWeek);
+    var shiftPeople = getShiftPeople();
     var html = "";
+
     SESSIONS.forEach(function(session) {
-      var assigned = rotaData.filter(function(a) { return a.session === session.id; });
-      html += '<div class="session-card"><h4>' + session.name + '</h4><div class="session-info">' + session.desc + '</div><div class="session-slots">';
-      assigned.forEach(function(a) { html += '<span class="slot">' + a.login + '<button class="remove-slot" data-session="' + session.id + '" data-login="' + a.login + '">&times;</button></span>'; });
-      html += '<button class="add-slot-btn" data-session="' + session.id + '"><i class="fa-solid fa-plus" style="font-size:9px;"></i> Add</button>';
-      html += '</div></div>';
+      html += '<div class="card" style="margin-bottom:12px;">';
+      html += '<div class="card-title" style="margin-bottom:8px;">' + session.name + ' <span style="font-size:11px;color:var(--text-muted);font-weight:400;">' + session.desc + '</span></div>';
+
+      // Day headers
+      html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">';
+      weekDays.forEach(function(day) {
+        html += '<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text-muted);">' + day.name + '<br><span style="font-size:9px;">' + day.date.getDate() + '</span></div>';
+      });
+      html += '</div>';
+
+      // Assignment cells for each day
+      html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">';
+      weekDays.forEach(function(day) {
+        var dayAssignments = rotaData.filter(function(a) { return a.session === session.id && a.day === day.key; });
+        var cellClass = dayAssignments.length > 0 ? "rota-cell filled" : "rota-cell empty";
+        html += '<div class="' + cellClass + '" data-session="' + session.id + '" data-day="' + day.key + '">';
+        if (dayAssignments.length > 0) {
+          dayAssignments.forEach(function(a) {
+            html += '<div class="rota-assigned"><span class="rota-name">' + a.login + '</span><button class="rota-remove" data-session="' + session.id + '" data-day="' + day.key + '" data-login="' + a.login + '">&times;</button></div>';
+          });
+        }
+        html += '<button class="rota-add-btn" data-session="' + session.id + '" data-day="' + day.key + '">+</button>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
     });
+
     container.innerHTML = html;
 
     // Attach remove handlers
-    container.querySelectorAll(".remove-slot").forEach(function(btn) {
-      btn.addEventListener("click", function() {
+    container.querySelectorAll(".rota-remove").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.stopPropagation();
         var session = this.getAttribute("data-session");
+        var day = this.getAttribute("data-day");
         var login = this.getAttribute("data-login");
-        rotaData = rotaData.filter(function(a) { return !(a.session === session && a.login === login); });
+        rotaData = rotaData.filter(function(a) { return !(a.session === session && a.day === day && a.login === login); });
         renderRotaSessions();
-        renderAvailableList();
       });
     });
 
     // Attach add handlers
-    container.querySelectorAll(".add-slot-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
+    container.querySelectorAll(".rota-add-btn").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.stopPropagation();
         var sessionId = this.getAttribute("data-session");
+        var dayKey = this.getAttribute("data-day");
         var session = SESSIONS.find(function(s) { return s.id === sessionId; });
-        var available = getAvailablePeople().filter(function(p) {
-          // Filter by allowed roles for this session
+
+        // Get eligible people for this session + day
+        var eligible = shiftPeople.filter(function(p) {
+          // Must be an allowed role for this session
           if (session.roles.indexOf(p.role) === -1) return false;
-          // Not already assigned to this session
-          if (rotaData.find(function(a) { return a.session === sessionId && a.login === p.login; })) return false;
+          // Not already assigned to this session on this day
+          if (rotaData.find(function(a) { return a.session === sessionId && a.day === dayKey && a.login === p.login; })) return false;
+          // Not on leave this day
+          if (isOnLeave(p.login, dayKey)) return false;
+          // Check availability (working days)
+          if (p.availability) {
+            var dayOfWeek = new Date(dayKey + "T12:00:00");
+            var dayName = DAY_NAMES[dayOfWeek.getDay()];
+            if (p.availability.split(",").indexOf(dayName) === -1) return false;
+          }
           return true;
         });
-        if (available.length === 0) { showToast("No eligible people available", true); return; }
-        // Show a quick picker
-        showPersonPicker(sessionId, available);
+
+        if (eligible.length === 0) { showToast("No eligible people available", true); return; }
+        showRotaPicker(sessionId, dayKey, eligible);
       });
     });
   }
 
-  function showPersonPicker(sessionId, available) {
-    // Create a temporary overlay picker
+  function showRotaPicker(sessionId, dayKey, eligible) {
     var overlay = document.createElement("div");
     overlay.className = "modal-overlay show";
     var modal = document.createElement("div");
@@ -882,22 +943,30 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     modal.style.maxHeight = "70vh";
     modal.style.overflowY = "auto";
     var session = SESSIONS.find(function(s) { return s.id === sessionId; });
-    modal.innerHTML = '<h3 style="margin-bottom:12px;">Assign to ' + session.name + '</h3>';
-    available.forEach(function(p) {
-      var leaveDays = getOnLeaveDays(p.login);
-      var leaveNote = leaveDays > 0 ? ' <span class="on-leave-badge">' + leaveDays + 'd off</span>' : '';
+    var dayDate = new Date(dayKey + "T12:00:00");
+    var dayName = DAY_NAMES[dayDate.getDay()] + " " + dayDate.getDate() + " " + MONTHS[dayDate.getMonth()];
+    modal.innerHTML = '<h3 style="margin-bottom:4px;">Assign to ' + session.name + '</h3><p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">' + dayName + '</p>';
+
+    eligible.sort(function(a,b) { return a.login.localeCompare(b.login); }).forEach(function(p) {
       var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
+      // Check if already assigned to something else this day
+      var otherAssignments = rotaData.filter(function(a) { return a.login === p.login && a.day === dayKey && a.session !== sessionId; });
+      var note = "";
+      if (otherAssignments.length > 0) {
+        var sessionNames = otherAssignments.map(function(a) { var s = SESSIONS.find(function(ss) { return ss.id === a.session; }); return s ? s.name : ""; }).join(", ");
+        note = '<div style="font-size:10px;color:var(--warning);">Also on: ' + sessionNames + '</div>';
+      }
       var row = document.createElement("div");
-      row.style.cssText = "padding:10px 0;border-bottom:1px solid var(--border-light);cursor:pointer;display:flex;align-items:center;gap:8px;";
-      row.innerHTML = '<span style="flex:1;font-size:14px;font-weight:500;">' + p.login + '</span><span class="leave-role ' + rc + '">' + p.role + '</span>' + leaveNote;
+      row.style.cssText = "padding:10px 0;border-bottom:1px solid var(--border-light);cursor:pointer;";
+      row.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><span style="flex:1;font-size:14px;font-weight:500;">' + p.login + '</span><span class="leave-role ' + rc + '">' + p.role + '</span></div>' + note;
       row.addEventListener("click", function() {
-        rotaData.push({ session: sessionId, login: p.login });
+        rotaData.push({ session: sessionId, day: dayKey, login: p.login });
         document.body.removeChild(overlay);
         renderRotaSessions();
-        renderAvailableList();
       });
       modal.appendChild(row);
     });
+
     var cancelBtn = document.createElement("button");
     cancelBtn.className = "modal-btn secondary";
     cancelBtn.style.marginTop = "12px";
@@ -906,24 +975,6 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     modal.appendChild(cancelBtn);
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
-  }
-
-  function renderAvailableList() {
-    var available = getAvailablePeople();
-    var title = document.getElementById("available-title");
-    title.textContent = "Available — " + rotaShift + " (" + available.length + " people)";
-    var container = document.getElementById("available-list");
-    if (available.length === 0) { container.innerHTML = '<div class="loading"><p>No people on this shift</p></div>'; return; }
-    var html = "";
-    available.sort(function(a,b) { return a.login.localeCompare(b.login); }).forEach(function(p) {
-      var leaveDays = getOnLeaveDays(p.login);
-      var leaveNote = leaveDays > 0 ? '<span class="on-leave-badge">' + leaveDays + 'd off this week</span>' : '';
-      var assigned = rotaData.filter(function(a) { return a.login === p.login; });
-      var assignedNote = assigned.length > 0 ? assigned.map(function(a) { var s = SESSIONS.find(function(ss) { return ss.id === a.session; }); return s ? s.name : a.session; }).join(", ") : '<span style="color:var(--text-muted);font-size:11px;">Unassigned</span>';
-      var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
-      html += '<div class="available-person"><span class="login">' + p.login + '</span><span class="leave-role ' + rc + '">' + p.role + '</span>' + leaveNote + '<div style="font-size:11px;margin-left:8px;color:var(--text-secondary);">' + assignedNote + '</div></div>';
-    });
-    container.innerHTML = html;
   }
 
   // Save Rota
@@ -937,70 +988,24 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     });
   });
 
-  // --- Manage ---
-  document.getElementById("add-btn").addEventListener("click", function() {
-    var login = document.getElementById("new-login").value.trim().toLowerCase();
-    var role = document.getElementById("new-role").value;
-    var shift = document.getElementById("new-shift").value;
-    if (!login) { showToast("Enter a login", true); return; }
-    if (people.find(function(p) { return p.login === login; })) { showToast("Already exists", true); return; }
-    apiCall({ action: "addPerson", login: login, role: role, shift: shift }, function(res) {
-      if (res && res.success) { people.push({ login: login, role: role, shift: shift }); document.getElementById("new-login").value = ""; renderPeopleList(); populateLoginSelect(); showToast("Added " + login, false); }
-      else { showToast("Failed to add", true); }
-    });
-  });
-
-  function renderPeopleList() {
-    // Manage filters
-    var fe = document.getElementById("manage-filters"); fe.innerHTML = "";
-    [{k:"all",l:"All"},{k:"DAYS",l:"Days"},{k:"TWI",l:"Twilight"},{k:"NIGHTS",l:"Nights"}].forEach(function(o) { var ch = document.createElement("button"); ch.className = "filter-chip" + (manageFilter === o.k ? " active" : ""); ch.textContent = o.l; ch.setAttribute("data-filter", o.k); ch.addEventListener("click", function() { manageFilter = this.getAttribute("data-filter"); renderPeopleList(); }); fe.appendChild(ch); });
-
-    var list = document.getElementById("people-list");
-    var filtered = people.filter(function(p) { return manageFilter === "all" || p.shift === manageFilter; });
-    if (filtered.length === 0) { list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members</p></div>'; return; }
-    var sorted = filtered.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
-    var html = "";
-    sorted.forEach(function(p) {
-      var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
-      var shiftLabel = p.shift || "No shift";
-      var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
-      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="edit-person-btn" data-login="' + p.login + '" data-role="' + p.role + '" data-shift="' + (p.shift || "") + '" style="background:none;border:none;color:var(--primary);font-size:16px;cursor:pointer;padding:8px;"><i class="fa-solid fa-pen"></i></button><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
-    });
-    list.innerHTML = html;
-    list.querySelectorAll(".remove-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var login = this.getAttribute("data-login");
-        apiCall({ action: "removePerson", login: login }, function(res) {
-          if (res && res.success) { people = people.filter(function(p) { return p.login !== login; }); delete leaveData[login]; renderPeopleList(); populateLoginSelect(); showToast("Removed " + login, false); }
-        });
-      });
-    });
-    list.querySelectorAll(".edit-person-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var login = this.getAttribute("data-login");
-        var role = this.getAttribute("data-role");
-        var shift = this.getAttribute("data-shift");
-        showEditModal(login, role, shift);
-      });
-    });
-  }
-
   // --- Edit Person ---
   var editLogin = null;
-  function showEditModal(login, role, shift) {
+  function showEditModal(login, role, shift, availability) {
     editLogin = login;
     document.getElementById("edit-login-display").textContent = login;
     document.getElementById("edit-role").value = role;
     document.getElementById("edit-shift").value = shift || "DAYS";
+    setDayPickerValue("edit-day-picker", availability || "Mon,Tue,Wed,Thu,Fri");
     document.getElementById("edit-modal").classList.add("show");
   }
   document.getElementById("edit-save").addEventListener("click", function() {
     var role = document.getElementById("edit-role").value;
     var shift = document.getElementById("edit-shift").value;
-    apiCall({ action: "updatePerson", login: editLogin, role: role, shift: shift }, function(res) {
+    var avail = getDayPickerValue("edit-day-picker");
+    apiCall({ action: "updatePerson", login: editLogin, role: role, shift: shift, availability: avail }, function(res) {
       if (res && res.success) {
         var person = people.find(function(p) { return p.login === editLogin; });
-        if (person) { person.role = role; person.shift = shift; }
+        if (person) { person.role = role; person.shift = shift; person.availability = avail; }
         document.getElementById("edit-modal").classList.remove("show");
         renderPeopleList();
         populateLoginSelect();
@@ -1011,6 +1016,31 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   document.getElementById("edit-cancel").addEventListener("click", function() {
     document.getElementById("edit-modal").classList.remove("show");
   });
+
+  // --- Day Picker Logic ---
+  function initDayPicker(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.querySelectorAll(".day-pick").forEach(function(btn) {
+      btn.addEventListener("click", function(e) { e.preventDefault(); this.classList.toggle("active"); });
+    });
+  }
+  function getDayPickerValue(containerId) {
+    var container = document.getElementById(containerId);
+    var days = [];
+    container.querySelectorAll(".day-pick.active").forEach(function(btn) { days.push(btn.getAttribute("data-day")); });
+    return days.join(",");
+  }
+  function setDayPickerValue(containerId, value) {
+    var container = document.getElementById(containerId);
+    var days = value ? value.split(",") : [];
+    container.querySelectorAll(".day-pick").forEach(function(btn) {
+      if (days.indexOf(btn.getAttribute("data-day")) !== -1) btn.classList.add("active");
+      else btn.classList.remove("active");
+    });
+  }
+  initDayPicker("add-day-picker");
+  initDayPicker("edit-day-picker");
 
   // --- INIT ---
   selectedWeek = getCurrentWeek(); dashWeek = getCurrentWeek(); rotaWeek = getCurrentWeek();
