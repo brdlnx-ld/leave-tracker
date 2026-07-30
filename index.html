@@ -361,6 +361,7 @@ a { color: var(--color-link, var(--color-primary)); }</style>
   --primary-light: #e3f2fd;
   --success: #36b37e;
   --error: #de350b;
+  --warning: #ff991f;
   --bg: #f8f9fa;
   --surface: #ffffff;
   --text: #172b4d;
@@ -379,10 +380,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border-light); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
 .nav-item { flex: 1; text-align: center; padding: 10px 4px 8px; cursor: pointer; color: var(--text-muted); font-size: 10px; font-weight: 500; transition: color 0.15s; }
-.nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
+.nav-item i { font-size: 18px; display: block; margin-bottom: 3px; }
 .nav-item.active { color: var(--primary); }
-.nav-item.locked { position: relative; }
-.nav-item.locked::after { content: "\f023"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 8px; position: absolute; top: 6px; right: calc(50% - 20px); color: var(--text-muted); }
+.nav-item.locked::after { content: "\f023"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 7px; position: absolute; top: 5px; right: calc(50% - 18px); color: var(--text-muted); }
+.nav-item { position: relative; }
 
 .view { display: none; padding: 16px; }
 .view.active { display: block; }
@@ -407,13 +408,11 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .day-cell.booked { background: var(--success); border-color: var(--success); }
 .day-cell.booked .day-name, .day-cell.booked .day-date { color: white; }
 .day-cell:not(.selected):not(.booked) { background: var(--bg); }
-.day-cell:not(.selected):not(.booked):active { background: var(--border-light); }
 
 .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; }
 .btn-primary:active { opacity: 0.9; }
 .btn-primary:disabled { opacity: 0.5; }
-.btn-danger { width: 100%; padding: 14px; background: var(--error); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-.btn-danger:active { opacity: 0.9; }
+.btn-danger { width: 100%; padding: 12px; background: var(--error); color: white; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
 
 .toast { position: fixed; top: 20px; left: 16px; right: 16px; padding: 14px 16px; border-radius: var(--radius-sm); color: white; font-size: 14px; font-weight: 500; z-index: 1000; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
@@ -439,17 +438,16 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .leave-dot.off { background: var(--border-light); color: transparent; }
 .leave-dot.today-marker { outline: 2px solid var(--primary); }
 
-.person-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-light); }
+.person-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-light); gap: 8px; }
 .person-row:last-child { border-bottom: none; }
 .person-info { flex: 1; }
 .person-login { font-size: 14px; font-weight: 500; }
 .person-role { font-size: 11px; color: var(--text-muted); }
-.remove-btn { background: none; border: none; color: var(--error); font-size: 18px; cursor: pointer; padding: 8px; }
+.remove-btn { background: none; border: none; color: var(--error); font-size: 16px; cursor: pointer; padding: 8px; }
 
 .loading { text-align: center; padding: 40px; color: var(--text-muted); }
 .loading i { font-size: 24px; margin-bottom: 8px; display: block; }
 
-/* Modal overlay */
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; }
 .modal-overlay.show { display: flex; }
 .modal { background: var(--surface); border-radius: var(--radius); padding: 24px; width: 100%; max-width: 320px; text-align: center; }
@@ -460,12 +458,31 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .modal-btn.primary { background: var(--primary); color: white; }
 .modal-btn.secondary { background: var(--border-light); color: var(--text-secondary); }
 
-/* My Leave list */
 .my-leave-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-light); }
 .my-leave-item:last-child { border-bottom: none; }
-.my-leave-date { font-size: 14px; font-weight: 500; }
-.my-leave-day { font-size: 12px; color: var(--text-muted); }
 .cancel-leave-btn { background: none; border: 1px solid var(--error); color: var(--error); font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+
+/* Rota styles */
+.shift-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.shift-tab { flex: 1; padding: 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; text-align: center; cursor: pointer; background: var(--border-light); color: var(--text-secondary); border: none; }
+.shift-tab.active { background: var(--primary); color: white; }
+
+.session-card { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+.session-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.session-card .session-info { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+.session-slots { display: flex; flex-wrap: wrap; gap: 6px; }
+.slot { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); }
+.slot .remove-slot { background: none; border: none; color: var(--error); cursor: pointer; font-size: 10px; padding: 0 0 0 4px; }
+.add-slot-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; background: var(--primary-light); color: var(--primary); border: 1px dashed var(--primary); cursor: pointer; }
+
+.available-list { margin-top: 12px; }
+.available-person { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+.available-person:last-child { border-bottom: none; }
+.available-person .login { flex: 1; font-weight: 500; }
+.available-person .badge { font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; }
+.on-leave-badge { background: #ffebee; color: #c62828; font-size: 9px; padding: 2px 6px; border-radius: 10px; }
+
+.assign-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--surface); color: var(--text); max-width: 160px; }
 </style>
 </head>
 <body>
@@ -479,7 +496,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <div class="modal-overlay" id="pin-modal">
   <div class="modal">
     <h3 id="pin-title">Enter your PIN</h3>
-    <p id="pin-subtitle">4-digit PIN to access your account</p>
+    <p id="pin-subtitle">4-digit PIN</p>
     <input type="password" id="pin-input" maxlength="4" placeholder="----" inputmode="numeric" pattern="[0-9]*">
     <button class="modal-btn primary" id="pin-confirm">Confirm</button>
     <button class="modal-btn secondary" id="pin-cancel">Cancel</button>
@@ -490,7 +507,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <div class="modal-overlay" id="admin-modal">
   <div class="modal">
     <h3><i class="fa-solid fa-lock"></i> Trainer Access</h3>
-    <p>Enter the admin PIN to access Dashboard &amp; Manage</p>
+    <p>Enter the admin PIN</p>
     <input type="password" id="admin-pin-input" maxlength="4" placeholder="----" inputmode="numeric" pattern="[0-9]*">
     <button class="modal-btn primary" id="admin-confirm">Unlock</button>
     <button class="modal-btn secondary" id="admin-cancel">Cancel</button>
@@ -509,7 +526,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="day-grid" id="day-grid"></div>
     <p style="font-size:11px;color:var(--text-muted);margin-top:8px;"><span style="display:inline-block;width:12px;height:12px;background:var(--success);border-radius:3px;vertical-align:middle;margin-right:4px;"></span> = Already booked</p>
   </div>
-  <button class="btn-primary" id="submit-btn"><i class="fa-solid fa-paper-plane"></i> Submit Leave</button>
+  <button class="btn-primary" id="submit-btn" disabled=""><i class="fa-solid fa-paper-plane"></i> Submit Leave</button>
 </div>
 
 <!-- MY LEAVE VIEW -->
@@ -531,20 +548,44 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   </div>
 </div>
 
+<!-- ROTA VIEW -->
+<div id="view-rota" class="view">
+  <div class="card">
+    <div class="card-title">Rota Builder</div>
+    <div class="week-scroll"><div class="week-tabs" id="rota-week-tabs"></div></div>
+    <div class="shift-tabs" id="rota-shift-tabs"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Assign Sessions</div>
+    <div id="rota-sessions"></div>
+  </div>
+  <div class="card">
+    <div class="card-title" id="available-title">Available People</div>
+    <div id="available-list"></div>
+  </div>
+  <button class="btn-primary" id="save-rota-btn"><i class="fa-solid fa-floppy-disk"></i> Save Rota</button>
+</div>
+
 <!-- MANAGE VIEW -->
 <div id="view-manage" class="view">
   <div class="card">
     <div class="card-title">Add Team Member</div>
     <input type="text" id="new-login" placeholder="Login (e.g. jsmith)" style="margin-bottom:8px;">
-    <select id="new-role">
+    <select id="new-role" style="margin-bottom:8px;">
       <option value="SM">Smile Maker</option>
       <option value="PI">Process Instructor</option>
       <option value="SME">SME</option>
+    </select>
+    <select id="new-shift">
+      <option value="DAYS">Days</option>
+      <option value="TWI">Twilight</option>
+      <option value="NIGHTS">Nights</option>
     </select>
     <button class="btn-primary" id="add-btn" style="margin-top:12px;"><i class="fa-solid fa-plus"></i> Add Person</button>
   </div>
   <div class="card">
     <div class="card-title">Team Members</div>
+    <div class="filter-row" id="manage-filters"></div>
     <div id="people-list"></div>
   </div>
 </div>
@@ -554,53 +595,45 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <div class="nav-item active" data-view="submit"><i class="fa-solid fa-pen-to-square"></i>Submit</div>
   <div class="nav-item" data-view="myleave"><i class="fa-solid fa-calendar-days"></i>My Leave</div>
   <div class="nav-item locked" data-view="dashboard"><i class="fa-solid fa-chart-bar"></i>Dashboard</div>
+  <div class="nav-item locked" data-view="rota"><i class="fa-solid fa-clipboard-list"></i>Rota</div>
   <div class="nav-item locked" data-view="manage"><i class="fa-solid fa-users-gear"></i>Manage</div>
 </div>
 
 <script>
 (function() {
   // ======== CONFIG ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbyfYXgiNQA2lxSMdGKctq4Nq9pg8Kssdo0dHu5AphjbukJTOpcXxcX7cPQWlwuRtKOo/exec";
-  var ADMIN_PIN = "1234"; // Change this to your trainer PIN
+  var API_URL = "https://script.google.com/macros/s/AKfycbzPx_6GtNFOVaW64LF3rzByVdgEXMZjiiR33hjTMMOcNXG5-zX8lCjtUKvCwA5kr_wb/exec";
+  var ADMIN_PIN = "1234";
   // =========================
 
   var people = [];
   var leaveData = {};
-  var selectedWeek = 31;
-  var dashWeek = 31;
+  var rotaData = []; // current rota assignments for selected week+shift
+  var selectedWeek, dashWeek, rotaWeek;
+  var rotaShift = "DAYS";
   var activeFilter = "all";
+  var manageFilter = "all";
   var currentUser = null;
   var adminUnlocked = false;
-  
-  function setLoggedIn(loggedIn) {
-    var grid = document.getElementById("day-grid");
-    var btn = document.getElementById("submit-btn");
-    if (loggedIn) {
-      btn.disabled = false;
-      renderDayGrid();
-    } else {
-      grid.innerHTML = '<div class="loading" style="padding:20px;"><i class="fa-solid fa-lock"></i><p>Select your name to log in</p></div>';
-      btn.disabled = true;
-    }
-  }
   var DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var WEEK_31_START = new Date(2026, 6, 26);
 
+  // Session definitions
+  var SESSIONS = [
+    { id: "day1", name: "Day 1", desc: "2x SM (PI backup if short)", roles: ["SM","PI"], min: 2 },
+    { id: "day2", name: "Day 2", desc: "SM/PI + SME support", roles: ["SM","PI","SME"], min: 1 },
+    { id: "aew", name: "AEW", desc: "1x PI or SM", roles: ["SM","PI"], min: 1 },
+    { id: "process", name: "Process Training", desc: "1x (if planned)", roles: ["SM","PI","SME"], min: 0 },
+    { id: "proxy", name: "Proxy", desc: "SM only (trainer cover)", roles: ["SM"], min: 0 }
+  ];
+
   // --- Date helpers ---
   function dateKey(d) { return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
   function shortDate(d) { return d.getDate() + " " + MONTHS[d.getMonth()]; }
-  function longDate(dateStr) {
-    var parts = dateStr.split("-");
-    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-    return DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];
-  }
+  function longDate(dateStr) { var p = dateStr.split("-"); var d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])); return DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()]; }
   function getWeekStart(wk) { var d = new Date(WEEK_31_START.getTime()); d.setDate(d.getDate() + (wk - 31) * 7); return d; }
-  function getWeekDays(wk) {
-    var start = getWeekStart(wk); var days = [];
-    for (var i = 0; i < 7; i++) { var d = new Date(start.getTime()); d.setDate(d.getDate() + i); days.push({ date: d, name: DAY_NAMES[i], key: dateKey(d) }); }
-    return days;
-  }
+  function getWeekDays(wk) { var start = getWeekStart(wk); var days = []; for (var i = 0; i < 7; i++) { var d = new Date(start.getTime()); d.setDate(d.getDate() + i); days.push({ date: d, name: DAY_NAMES[i], key: dateKey(d) }); } return days; }
   function getCurrentWeek() { var diff = Math.floor((new Date() - WEEK_31_START) / 86400000); return 31 + Math.floor(diff / 7); }
   function getWeeks() { var cw = getCurrentWeek(); var arr = []; for (var i = 0; i < 8; i++) arr.push(cw + i); return arr; }
 
@@ -609,312 +642,322 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     var url = API_URL + "?" + Object.keys(params).map(function(k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
     fetch(url, { redirect: "follow" }).then(function(r) { return r.json(); }).then(function(data) { callback(data); }).catch(function() { callback(null); });
   }
-
   function loadData() {
     var loaded = 0;
-    function checkReady() { loaded++; if (loaded >= 2) { populateLoginSelect(); renderPeopleList(); renderDashboard(); } }
+    function checkReady() { loaded++; if (loaded >= 2) { populateLoginSelect(); } }
     apiCall({ action: "getPeople" }, function(res) { if (res && res.people) people = res.people; checkReady(); });
     apiCall({ action: "getLeave" }, function(res) { if (res && res.leave) leaveData = res.leave; checkReady(); });
   }
-
-  // --- Toast ---
   function showToast(msg, isError) { var t = document.getElementById("toast"); t.textContent = msg; t.style.background = isError ? "#de350b" : "#36b37e"; t.style.display = "block"; setTimeout(function() { t.style.display = "none"; }, 3000); }
 
   // --- PIN Modal ---
   var pinCallback = null;
-  var pinMode = "verify"; // "verify", "set", "create"
-
-  function showPinModal(title, subtitle, mode, cb) {
-    pinMode = mode;
-    pinCallback = cb;
-    document.getElementById("pin-title").textContent = title;
-    document.getElementById("pin-subtitle").textContent = subtitle;
-    document.getElementById("pin-input").value = "";
-    document.getElementById("pin-modal").classList.add("show");
-    setTimeout(function() { document.getElementById("pin-input").focus(); }, 100);
-  }
-
+  function showPinModal(title, subtitle, cb) { pinCallback = cb; document.getElementById("pin-title").textContent = title; document.getElementById("pin-subtitle").textContent = subtitle; document.getElementById("pin-input").value = ""; document.getElementById("pin-modal").classList.add("show"); setTimeout(function() { document.getElementById("pin-input").focus(); }, 100); }
   function hidePinModal() { document.getElementById("pin-modal").classList.remove("show"); pinCallback = null; }
-
-  document.getElementById("pin-confirm").addEventListener("click", function() {
-    var pin = document.getElementById("pin-input").value;
-    if (pin.length !== 4) { showToast("PIN must be 4 digits", true); return; }
-    if (pinCallback) pinCallback(pin);
-    hidePinModal();
-  });
-  document.getElementById("pin-cancel").addEventListener("click", function() {
-    hidePinModal();
-    document.getElementById("login-select").value = "";
-    currentUser = null;
-    setLoggedIn(false);
-  });
+  document.getElementById("pin-confirm").addEventListener("click", function() { var pin = document.getElementById("pin-input").value; if (pin.length !== 4) { showToast("PIN must be 4 digits", true); return; } if (pinCallback) pinCallback(pin); hidePinModal(); });
+  document.getElementById("pin-cancel").addEventListener("click", function() { hidePinModal(); document.getElementById("login-select").value = ""; currentUser = null; setLoggedIn(false); });
 
   // --- Admin Modal ---
   var adminCallback = null;
-  function showAdminModal(cb) {
-    adminCallback = cb;
-    document.getElementById("admin-pin-input").value = "";
-    document.getElementById("admin-modal").classList.add("show");
-    setTimeout(function() { document.getElementById("admin-pin-input").focus(); }, 100);
-  }
+  function showAdminModal(cb) { adminCallback = cb; document.getElementById("admin-pin-input").value = ""; document.getElementById("admin-modal").classList.add("show"); setTimeout(function() { document.getElementById("admin-pin-input").focus(); }, 100); }
   function hideAdminModal() { document.getElementById("admin-modal").classList.remove("show"); adminCallback = null; }
-  document.getElementById("admin-confirm").addEventListener("click", function() {
-    var pin = document.getElementById("admin-pin-input").value;
-    if (pin === ADMIN_PIN) { adminUnlocked = true; hideAdminModal(); if (adminCallback) adminCallback(); }
-    else { showToast("Incorrect admin PIN", true); }
-  });
+  document.getElementById("admin-confirm").addEventListener("click", function() { var pin = document.getElementById("admin-pin-input").value; if (pin === ADMIN_PIN) { adminUnlocked = true; hideAdminModal(); if (adminCallback) adminCallback(); } else { showToast("Incorrect admin PIN", true); } });
   document.getElementById("admin-cancel").addEventListener("click", hideAdminModal);
 
   // --- Navigation ---
-  var navItems = document.querySelectorAll(".nav-item");
   function switchView(viewName) {
-    for (var j = 0; j < navItems.length; j++) navItems[j].classList.remove("active");
+    document.querySelectorAll(".nav-item").forEach(function(n) { n.classList.remove("active"); });
     document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
     document.querySelector('[data-view="' + viewName + '"]').classList.add("active");
     document.getElementById("view-" + viewName).classList.add("active");
-    if (viewName === "dashboard") renderDashboard();
-    if (viewName === "manage") renderPeopleList();
-    if (viewName === "submit") { buildWeekTabs(); renderDayGrid(); populateLoginSelect(); }
+    if (viewName === "submit") { buildWeekTabs(); renderDayGrid(); }
     if (viewName === "myleave") renderMyLeave();
+    if (viewName === "dashboard") renderDashboard();
+    if (viewName === "rota") { buildRotaWeekTabs(); buildRotaShiftTabs(); loadRota(); }
+    if (viewName === "manage") renderPeopleList();
   }
-
-  for (var i = 0; i < navItems.length; i++) {
-    navItems[i].addEventListener("click", function() {
+  document.querySelectorAll(".nav-item").forEach(function(nav) {
+    nav.addEventListener("click", function() {
       var view = this.getAttribute("data-view");
-      // Admin-only views
-      if (view === "dashboard" || view === "manage") {
-        if (!adminUnlocked) { showAdminModal(function() { switchView(view); }); return; }
-      }
-      // My Leave requires being logged in
-      if (view === "myleave") {
-        if (!currentUser) { showToast("Select your login first", true); return; }
-      }
+      if ((view === "dashboard" || view === "rota" || view === "manage") && !adminUnlocked) { showAdminModal(function() { switchView(view); }); return; }
+      if (view === "myleave" && !currentUser) { showToast("Select your login first", true); return; }
       switchView(view);
     });
-  }
+  });
 
-  // --- Submit View ---
+  // --- Login ---
+  function setLoggedIn(loggedIn) {
+    var grid = document.getElementById("day-grid");
+    var btn = document.getElementById("submit-btn");
+    if (loggedIn) { btn.disabled = false; renderDayGrid(); }
+    else { grid.innerHTML = '<div class="loading" style="padding:20px;"><i class="fa-solid fa-lock"></i><p>Select your name to log in</p></div>'; btn.disabled = true; }
+  }
   function populateLoginSelect() {
     var sel = document.getElementById("login-select");
     var html = '<option value="">Select your login...</option>';
-    var sorted = people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
-    for (var i = 0; i < sorted.length; i++) { html += '<option value="' + sorted[i].login + '">' + sorted[i].login + '</option>'; }
+    people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); }).forEach(function(p) { html += '<option value="' + p.login + '">' + p.login + '</option>'; });
     sel.innerHTML = html;
   }
-
-  function buildWeekTabs() {
-    var weeks = getWeeks(); var container = document.getElementById("week-tabs"); container.innerHTML = "";
-    for (var i = 0; i < weeks.length; i++) {
-      var tab = document.createElement("button");
-      tab.className = "week-tab" + (weeks[i] === selectedWeek ? " active" : "");
-      var days = getWeekDays(weeks[i]);
-      tab.textContent = "W" + weeks[i] + " (" + shortDate(days[0].date) + ")";
-      tab.setAttribute("data-week", weeks[i]);
-      tab.addEventListener("click", function() { selectedWeek = parseInt(this.getAttribute("data-week")); buildWeekTabs(); renderDayGrid(); });
-      container.appendChild(tab);
-    }
-  }
-
-  function renderDayGrid() {
-    var grid = document.getElementById("day-grid"); grid.innerHTML = "";
-    var days = getWeekDays(selectedWeek);
-    var today = dateKey(new Date());
-    var login = document.getElementById("login-select").value;
-    var userLeave = (login && leaveData[login]) ? leaveData[login] : [];
-
-    for (var i = 0; i < days.length; i++) {
-      var cell = document.createElement("div");
-      var isWeekend = (days[i].name === "Sun" || days[i].name === "Sat");
-      var isBooked = userLeave.indexOf(days[i].key) !== -1;
-      cell.className = "day-cell" + (isWeekend ? " weekend" : "") + (isBooked ? " booked" : "");
-      cell.setAttribute("data-key", days[i].key);
-      cell.innerHTML = '<div class="day-name">' + days[i].name + '</div><div class="day-date">' + days[i].date.getDate() + '</div>';
-      if (days[i].key === today) cell.style.outline = "2px solid var(--primary)";
-      if (!isBooked) { cell.addEventListener("click", function() { this.classList.toggle("selected"); }); }
-      grid.appendChild(cell);
-    }
-  }
-
-  // Re-render day grid when user changes
   document.getElementById("login-select").addEventListener("change", function() {
     var login = this.value;
     if (!login) { currentUser = null; setLoggedIn(false); return; }
     var person = people.find(function(p) { return p.login === login; });
     if (!person) return;
-
     if (person.pin) {
-      showPinModal("Enter your PIN", "Hi " + login + " — enter your 4-digit PIN", "verify", function(pin) {
+      showPinModal("Enter your PIN", "Hi " + login, function(pin) {
         if (pin === person.pin) { currentUser = login; setLoggedIn(true); showToast("Logged in as " + login, false); }
         else { showToast("Incorrect PIN", true); document.getElementById("login-select").value = ""; currentUser = null; setLoggedIn(false); }
       });
     } else {
-      showPinModal("Create your PIN", "Hi " + login + " — set a 4-digit PIN to protect your account", "create", function(pin) {
+      showPinModal("Create your PIN", "Hi " + login + " — set a 4-digit PIN", function(pin) {
         apiCall({ action: "setPin", login: login, pin: pin }, function(res) {
-          if (res && res.success) { person.pin = pin; currentUser = login; setLoggedIn(true); showToast("PIN set! Logged in as " + login, false); }
+          if (res && res.success) { person.pin = pin; currentUser = login; setLoggedIn(true); showToast("PIN set! Logged in", false); }
           else { showToast("Failed to set PIN", true); document.getElementById("login-select").value = ""; setLoggedIn(false); }
         });
       });
     }
   });
 
+  // --- Submit Leave ---
+  function buildWeekTabs() { var weeks = getWeeks(); var c = document.getElementById("week-tabs"); c.innerHTML = ""; weeks.forEach(function(wk) { var t = document.createElement("button"); t.className = "week-tab" + (wk === selectedWeek ? " active" : ""); var d = getWeekDays(wk); t.textContent = "W" + wk + " (" + shortDate(d[0].date) + ")"; t.setAttribute("data-week", wk); t.addEventListener("click", function() { selectedWeek = parseInt(this.getAttribute("data-week")); buildWeekTabs(); renderDayGrid(); }); c.appendChild(t); }); }
+  function renderDayGrid() {
+    var grid = document.getElementById("day-grid"); grid.innerHTML = "";
+    var days = getWeekDays(selectedWeek); var today = dateKey(new Date());
+    var userLeave = (currentUser && leaveData[currentUser]) ? leaveData[currentUser] : [];
+    days.forEach(function(day) {
+      var cell = document.createElement("div"); var isWeekend = (day.name === "Sun" || day.name === "Sat"); var isBooked = userLeave.indexOf(day.key) !== -1;
+      cell.className = "day-cell" + (isWeekend ? " weekend" : "") + (isBooked ? " booked" : "");
+      cell.setAttribute("data-key", day.key);
+      cell.innerHTML = '<div class="day-name">' + day.name + '</div><div class="day-date">' + day.date.getDate() + '</div>';
+      if (day.key === today) cell.style.outline = "2px solid var(--primary)";
+      if (!isBooked) cell.addEventListener("click", function() { this.classList.toggle("selected"); });
+      grid.appendChild(cell);
+    });
+  }
   document.getElementById("submit-btn").addEventListener("click", function() {
-    if (!currentUser) { showToast("Please select your login first", true); return; }
+    if (!currentUser) { showToast("Please log in first", true); return; }
     var selected = document.querySelectorAll(".day-cell.selected");
-    if (selected.length === 0) { showToast("Please select at least one day", true); return; }
-    doSubmitLeave(currentUser);
+    if (selected.length === 0) { showToast("Select at least one day", true); return; }
+    var dates = []; selected.forEach(function(s) { dates.push(s.getAttribute("data-key")); });
+    var btn = document.getElementById("submit-btn"); btn.disabled = true; btn.textContent = "Submitting...";
+    apiCall({ action: "submitLeave", login: currentUser, dates: dates.join(",") }, function(res) {
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Leave';
+      if (res && res.success) { if (!leaveData[currentUser]) leaveData[currentUser] = []; dates.forEach(function(d) { if (leaveData[currentUser].indexOf(d) === -1) leaveData[currentUser].push(d); }); document.querySelectorAll(".day-cell.selected").forEach(function(c) { c.classList.remove("selected"); }); renderDayGrid(); showToast("Leave submitted! (" + dates.length + " days)", false); }
+      else { showToast("Failed to submit", true); }
+    });
   });
 
-  function doSubmitLeave(login) {
-    var selected = document.querySelectorAll(".day-cell.selected");
-    var dates = [];
-    for (var i = 0; i < selected.length; i++) dates.push(selected[i].getAttribute("data-key"));
-    var btn = document.getElementById("submit-btn");
-    btn.disabled = true; btn.textContent = "Submitting...";
-    apiCall({ action: "submitLeave", login: login, dates: dates.join(",") }, function(res) {
-      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Leave';
-      if (res && res.success) {
-        if (!leaveData[login]) leaveData[login] = [];
-        for (var i = 0; i < dates.length; i++) { if (leaveData[login].indexOf(dates[i]) === -1) leaveData[login].push(dates[i]); }
-        renderDayGrid();
-        showToast("Leave submitted! (" + dates.length + " days)", false);
-      } else { showToast("Failed to submit. Check connection.", true); }
-    });
-  }
-
-  // --- My Leave View ---
+  // --- My Leave ---
   function renderMyLeave() {
-    var login = currentUser || document.getElementById("login-select").value;
     var list = document.getElementById("my-leave-list");
-    var userLeave = (login && leaveData[login]) ? leaveData[login] : [];
+    var userLeave = (currentUser && leaveData[currentUser]) ? leaveData[currentUser] : [];
     var today = dateKey(new Date());
-
-    // Filter to future/today dates and sort
     var upcoming = userLeave.filter(function(d) { return d >= today; }).sort();
-
-    if (upcoming.length === 0) {
-      list.innerHTML = '<div class="loading"><i class="fa-solid fa-umbrella-beach"></i><p>No upcoming leave booked</p></div>';
-      return;
-    }
-
-    var html = "";
-    for (var i = 0; i < upcoming.length; i++) {
-      html += '<div class="my-leave-item"><div><div class="my-leave-date">' + longDate(upcoming[i]) + '</div></div><button class="cancel-leave-btn" data-date="' + upcoming[i] + '">Cancel</button></div>';
-    }
+    if (upcoming.length === 0) { list.innerHTML = '<div class="loading"><i class="fa-solid fa-umbrella-beach"></i><p>No upcoming leave</p></div>'; return; }
+    var html = ""; upcoming.forEach(function(d) { html += '<div class="my-leave-item"><div style="font-size:14px;font-weight:500;">' + longDate(d) + '</div><button class="cancel-leave-btn" data-date="' + d + '">Cancel</button></div>'; });
     list.innerHTML = html;
-
-    // Attach cancel handlers
-    var cancelBtns = list.querySelectorAll(".cancel-leave-btn");
-    for (var j = 0; j < cancelBtns.length; j++) {
-      cancelBtns[j].addEventListener("click", function() {
-        var dateToCancel = this.getAttribute("data-date");
-        doCancelLeave(login, dateToCancel);
-      });
-    }
-  }
-
-  function doCancelLeave(login, date) {
-    apiCall({ action: "cancelLeave", login: login, date: date }, function(res) {
-      if (res && res.success) {
-        leaveData[login] = leaveData[login].filter(function(d) { return d !== date; });
-        renderMyLeave();
-        showToast("Leave cancelled", false);
-      } else { showToast("Failed to cancel", true); }
-    });
+    list.querySelectorAll(".cancel-leave-btn").forEach(function(btn) { btn.addEventListener("click", function() { var date = this.getAttribute("data-date"); apiCall({ action: "cancelLeave", login: currentUser, date: date }, function(res) { if (res && res.success) { leaveData[currentUser] = leaveData[currentUser].filter(function(d) { return d !== date; }); renderMyLeave(); showToast("Cancelled", false); } else { showToast("Failed", true); } }); }); });
   }
 
   // --- Dashboard ---
-  function buildDashWeekTabs() {
-    var weeks = getWeeks(); var container = document.getElementById("dash-week-tabs"); container.innerHTML = "";
-    for (var i = 0; i < weeks.length; i++) {
-      var tab = document.createElement("button");
-      tab.className = "week-tab" + (weeks[i] === dashWeek ? " active" : "");
-      tab.textContent = "W" + weeks[i];
-      tab.setAttribute("data-week", weeks[i]);
-      tab.addEventListener("click", function() { dashWeek = parseInt(this.getAttribute("data-week")); renderDashboard(); });
-      container.appendChild(tab);
-    }
-  }
-
   function renderDashboard() {
     var today = dateKey(new Date()); var currentWk = getCurrentWeek();
     var onLeaveToday = 0; var leaveDaysThisWeek = 0; var thisWeekDays = getWeekDays(currentWk);
-    for (var p = 0; p < people.length; p++) {
-      var pLeave = leaveData[people[p].login] || [];
-      if (pLeave.indexOf(today) !== -1) onLeaveToday++;
-      for (var d = 0; d < thisWeekDays.length; d++) { if (pLeave.indexOf(thisWeekDays[d].key) !== -1) leaveDaysThisWeek++; }
-    }
+    people.forEach(function(p) { var pl = leaveData[p.login] || []; if (pl.indexOf(today) !== -1) onLeaveToday++; thisWeekDays.forEach(function(d) { if (pl.indexOf(d.key) !== -1) leaveDaysThisWeek++; }); });
     document.getElementById("stats").innerHTML = '<div class="stat-box"><div class="num">' + onLeaveToday + '</div><div class="label">Off Today</div></div><div class="stat-box"><div class="num">' + leaveDaysThisWeek + '</div><div class="label">Days This Wk</div></div><div class="stat-box"><div class="num">' + people.length + '</div><div class="label">People</div></div>';
-
-    buildDashWeekTabs();
-    var filtersEl = document.getElementById("dash-filters"); filtersEl.innerHTML = "";
-    var opts = [{k:"all",l:"All"},{k:"SM",l:"SM"},{k:"PI",l:"PI"},{k:"SME",l:"SME"}];
-    for (var f = 0; f < opts.length; f++) {
-      var chip = document.createElement("button");
-      chip.className = "filter-chip" + (activeFilter === opts[f].k ? " active" : "");
-      chip.textContent = opts[f].l;
-      chip.setAttribute("data-filter", opts[f].k);
-      chip.addEventListener("click", function() { activeFilter = this.getAttribute("data-filter"); renderDashboard(); });
-      filtersEl.appendChild(chip);
-    }
-
-    var filtered = [];
-    for (var i = 0; i < people.length; i++) { if (activeFilter === "all" || people[i].role === activeFilter) filtered.push(people[i]); }
-    filtered.sort(function(a,b) { return a.login.localeCompare(b.login); });
+    // Week tabs
+    var c = document.getElementById("dash-week-tabs"); c.innerHTML = ""; getWeeks().forEach(function(wk) { var t = document.createElement("button"); t.className = "week-tab" + (wk === dashWeek ? " active" : ""); t.textContent = "W" + wk; t.setAttribute("data-week", wk); t.addEventListener("click", function() { dashWeek = parseInt(this.getAttribute("data-week")); renderDashboard(); }); c.appendChild(t); });
+    // Filters
+    var fe = document.getElementById("dash-filters"); fe.innerHTML = "";
+    [{k:"all",l:"All"},{k:"SM",l:"SM"},{k:"PI",l:"PI"},{k:"SME",l:"SME"}].forEach(function(o) { var ch = document.createElement("button"); ch.className = "filter-chip" + (activeFilter === o.k ? " active" : ""); ch.textContent = o.l; ch.setAttribute("data-filter", o.k); ch.addEventListener("click", function() { activeFilter = this.getAttribute("data-filter"); renderDashboard(); }); fe.appendChild(ch); });
+    // List
+    var filtered = people.filter(function(p) { return activeFilter === "all" || p.role === activeFilter; }).sort(function(a,b) { return a.login.localeCompare(b.login); });
     var listEl = document.getElementById("dash-list");
-    if (filtered.length === 0) { listEl.innerHTML = '<div class="loading"><i class="fa-solid fa-users"></i><p>No people added yet</p></div>'; return; }
-
+    if (filtered.length === 0) { listEl.innerHTML = '<div class="loading"><p>No people</p></div>'; return; }
     var days = getWeekDays(dashWeek);
-    var html = '<div style="display:flex;gap:2px;justify-content:flex-end;margin-bottom:8px;padding-right:4px;">';
-    for (var dh = 0; dh < 7; dh++) { html += '<div style="width:20px;text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">' + days[dh].name.charAt(0) + '</div>'; }
-    html += '</div>';
-    for (var r = 0; r < filtered.length; r++) {
-      var person = filtered[r]; var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme";
-      html += '<div class="leave-row"><div class="leave-name">' + person.login + '</div><span class="leave-role ' + rc + '">' + person.role + '</span><div class="leave-days">';
-      var pLeave2 = leaveData[person.login] || [];
-      for (var d2 = 0; d2 < 7; d2++) {
-        var hasLeave = pLeave2.indexOf(days[d2].key) !== -1; var isToday = days[d2].key === today;
-        html += '<div class="leave-dot ' + (hasLeave ? "on" : "off") + (isToday ? " today-marker" : "") + '">' + (hasLeave ? "AL" : "") + '</div>';
-      }
-      html += '</div></div>';
-    }
+    var html = '<div style="display:flex;gap:2px;justify-content:flex-end;margin-bottom:8px;padding-right:4px;">'; days.forEach(function(d) { html += '<div style="width:20px;text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">' + d.name.charAt(0) + '</div>'; }); html += '</div>';
+    filtered.forEach(function(person) { var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme"; html += '<div class="leave-row"><div class="leave-name">' + person.login + '</div><span class="leave-role ' + rc + '">' + person.role + '</span><div class="leave-days">'; var pl = leaveData[person.login] || []; days.forEach(function(d) { var has = pl.indexOf(d.key) !== -1; var isT = d.key === today; html += '<div class="leave-dot ' + (has?"on":"off") + (isT?" today-marker":"") + '">' + (has?"AL":"") + '</div>'; }); html += '</div></div>'; });
     listEl.innerHTML = html;
   }
+
+  // --- Rota Builder ---
+  function buildRotaWeekTabs() { var c = document.getElementById("rota-week-tabs"); c.innerHTML = ""; getWeeks().forEach(function(wk) { var t = document.createElement("button"); t.className = "week-tab" + (wk === rotaWeek ? " active" : ""); t.textContent = "W" + wk; t.setAttribute("data-week", wk); t.addEventListener("click", function() { rotaWeek = parseInt(this.getAttribute("data-week")); buildRotaWeekTabs(); loadRota(); }); c.appendChild(t); }); }
+  function buildRotaShiftTabs() { var c = document.getElementById("rota-shift-tabs"); c.innerHTML = ""; ["DAYS","TWI","NIGHTS"].forEach(function(s) { var t = document.createElement("button"); t.className = "shift-tab" + (s === rotaShift ? " active" : ""); t.textContent = s === "TWI" ? "Twilight" : s.charAt(0) + s.slice(1).toLowerCase(); t.setAttribute("data-shift", s); t.addEventListener("click", function() { rotaShift = this.getAttribute("data-shift"); buildRotaShiftTabs(); loadRota(); }); c.appendChild(t); }); }
+
+  function loadRota() {
+    apiCall({ action: "getRota", week: rotaWeek, shift: rotaShift }, function(res) {
+      rotaData = (res && res.assignments) ? res.assignments : [];
+      renderRotaSessions();
+      renderAvailableList();
+    });
+  }
+
+  function getAvailablePeople() {
+    var weekDays = getWeekDays(rotaWeek);
+    return people.filter(function(p) {
+      if (p.shift !== rotaShift) return false;
+      // Check if on leave ALL week (still available if only off some days)
+      return true;
+    });
+  }
+
+  function getOnLeaveDays(login) {
+    var weekDays = getWeekDays(rotaWeek);
+    var pl = leaveData[login] || [];
+    var count = 0;
+    weekDays.forEach(function(d) { if (pl.indexOf(d.key) !== -1) count++; });
+    return count;
+  }
+
+  function renderRotaSessions() {
+    var container = document.getElementById("rota-sessions");
+    var html = "";
+    SESSIONS.forEach(function(session) {
+      var assigned = rotaData.filter(function(a) { return a.session === session.id; });
+      html += '<div class="session-card"><h4>' + session.name + '</h4><div class="session-info">' + session.desc + '</div><div class="session-slots">';
+      assigned.forEach(function(a) { html += '<span class="slot">' + a.login + '<button class="remove-slot" data-session="' + session.id + '" data-login="' + a.login + '">&times;</button></span>'; });
+      html += '<button class="add-slot-btn" data-session="' + session.id + '"><i class="fa-solid fa-plus" style="font-size:9px;"></i> Add</button>';
+      html += '</div></div>';
+    });
+    container.innerHTML = html;
+
+    // Attach remove handlers
+    container.querySelectorAll(".remove-slot").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var session = this.getAttribute("data-session");
+        var login = this.getAttribute("data-login");
+        rotaData = rotaData.filter(function(a) { return !(a.session === session && a.login === login); });
+        renderRotaSessions();
+        renderAvailableList();
+      });
+    });
+
+    // Attach add handlers
+    container.querySelectorAll(".add-slot-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var sessionId = this.getAttribute("data-session");
+        var session = SESSIONS.find(function(s) { return s.id === sessionId; });
+        var available = getAvailablePeople().filter(function(p) {
+          // Filter by allowed roles for this session
+          if (session.roles.indexOf(p.role) === -1) return false;
+          // Not already assigned to this session
+          if (rotaData.find(function(a) { return a.session === sessionId && a.login === p.login; })) return false;
+          return true;
+        });
+        if (available.length === 0) { showToast("No eligible people available", true); return; }
+        // Show a quick picker
+        showPersonPicker(sessionId, available);
+      });
+    });
+  }
+
+  function showPersonPicker(sessionId, available) {
+    // Create a temporary overlay picker
+    var overlay = document.createElement("div");
+    overlay.className = "modal-overlay show";
+    var modal = document.createElement("div");
+    modal.className = "modal";
+    modal.style.textAlign = "left";
+    modal.style.maxHeight = "70vh";
+    modal.style.overflowY = "auto";
+    var session = SESSIONS.find(function(s) { return s.id === sessionId; });
+    modal.innerHTML = '<h3 style="margin-bottom:12px;">Assign to ' + session.name + '</h3>';
+    available.forEach(function(p) {
+      var leaveDays = getOnLeaveDays(p.login);
+      var leaveNote = leaveDays > 0 ? ' <span class="on-leave-badge">' + leaveDays + 'd off</span>' : '';
+      var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
+      var row = document.createElement("div");
+      row.style.cssText = "padding:10px 0;border-bottom:1px solid var(--border-light);cursor:pointer;display:flex;align-items:center;gap:8px;";
+      row.innerHTML = '<span style="flex:1;font-size:14px;font-weight:500;">' + p.login + '</span><span class="leave-role ' + rc + '">' + p.role + '</span>' + leaveNote;
+      row.addEventListener("click", function() {
+        rotaData.push({ session: sessionId, login: p.login });
+        document.body.removeChild(overlay);
+        renderRotaSessions();
+        renderAvailableList();
+      });
+      modal.appendChild(row);
+    });
+    var cancelBtn = document.createElement("button");
+    cancelBtn.className = "modal-btn secondary";
+    cancelBtn.style.marginTop = "12px";
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.addEventListener("click", function() { document.body.removeChild(overlay); });
+    modal.appendChild(cancelBtn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+  }
+
+  function renderAvailableList() {
+    var available = getAvailablePeople();
+    var title = document.getElementById("available-title");
+    title.textContent = "Available — " + rotaShift + " (" + available.length + " people)";
+    var container = document.getElementById("available-list");
+    if (available.length === 0) { container.innerHTML = '<div class="loading"><p>No people on this shift</p></div>'; return; }
+    var html = "";
+    available.sort(function(a,b) { return a.login.localeCompare(b.login); }).forEach(function(p) {
+      var leaveDays = getOnLeaveDays(p.login);
+      var leaveNote = leaveDays > 0 ? '<span class="on-leave-badge">' + leaveDays + 'd off this week</span>' : '';
+      var assigned = rotaData.filter(function(a) { return a.login === p.login; });
+      var assignedNote = assigned.length > 0 ? assigned.map(function(a) { var s = SESSIONS.find(function(ss) { return ss.id === a.session; }); return s ? s.name : a.session; }).join(", ") : '<span style="color:var(--text-muted);font-size:11px;">Unassigned</span>';
+      var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
+      html += '<div class="available-person"><span class="login">' + p.login + '</span><span class="leave-role ' + rc + '">' + p.role + '</span>' + leaveNote + '<div style="font-size:11px;margin-left:8px;color:var(--text-secondary);">' + assignedNote + '</div></div>';
+    });
+    container.innerHTML = html;
+  }
+
+  // Save Rota
+  document.getElementById("save-rota-btn").addEventListener("click", function() {
+    var btn = this; btn.disabled = true; btn.textContent = "Saving...";
+    var encoded = encodeURIComponent(JSON.stringify(rotaData));
+    apiCall({ action: "saveRota", week: rotaWeek, shift: rotaShift, assignments: encoded }, function(res) {
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Rota';
+      if (res && res.success) { showToast("Rota saved!", false); }
+      else { showToast("Failed to save rota", true); }
+    });
+  });
 
   // --- Manage ---
   document.getElementById("add-btn").addEventListener("click", function() {
     var login = document.getElementById("new-login").value.trim().toLowerCase();
     var role = document.getElementById("new-role").value;
-    if (!login) { showToast("Please enter a login", true); return; }
-    for (var i = 0; i < people.length; i++) { if (people[i].login === login) { showToast("Login already exists", true); return; } }
-    apiCall({ action: "addPerson", login: login, role: role }, function(res) {
-      if (res && res.success) { people.push({ login: login, role: role }); document.getElementById("new-login").value = ""; renderPeopleList(); populateLoginSelect(); showToast("Added " + login, false); }
-      else { showToast("Failed to add. Check connection.", true); }
+    var shift = document.getElementById("new-shift").value;
+    if (!login) { showToast("Enter a login", true); return; }
+    if (people.find(function(p) { return p.login === login; })) { showToast("Already exists", true); return; }
+    apiCall({ action: "addPerson", login: login, role: role, shift: shift }, function(res) {
+      if (res && res.success) { people.push({ login: login, role: role, shift: shift }); document.getElementById("new-login").value = ""; renderPeopleList(); populateLoginSelect(); showToast("Added " + login, false); }
+      else { showToast("Failed to add", true); }
     });
   });
 
   function renderPeopleList() {
+    // Manage filters
+    var fe = document.getElementById("manage-filters"); fe.innerHTML = "";
+    [{k:"all",l:"All"},{k:"DAYS",l:"Days"},{k:"TWI",l:"Twilight"},{k:"NIGHTS",l:"Nights"}].forEach(function(o) { var ch = document.createElement("button"); ch.className = "filter-chip" + (manageFilter === o.k ? " active" : ""); ch.textContent = o.l; ch.setAttribute("data-filter", o.k); ch.addEventListener("click", function() { manageFilter = this.getAttribute("data-filter"); renderPeopleList(); }); fe.appendChild(ch); });
+
     var list = document.getElementById("people-list");
-    if (people.length === 0) { list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members yet</p></div>'; return; }
-    var sorted = people.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
+    var filtered = people.filter(function(p) { return manageFilter === "all" || p.shift === manageFilter; });
+    if (filtered.length === 0) { list.innerHTML = '<div class="loading"><i class="fa-solid fa-user-plus"></i><p>No team members</p></div>'; return; }
+    var sorted = filtered.slice().sort(function(a,b) { return a.login.localeCompare(b.login); });
     var html = "";
-    for (var i = 0; i < sorted.length; i++) {
-      var p = sorted[i]; var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
-      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + '</div></div><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
-    }
+    sorted.forEach(function(p) {
+      var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
+      var shiftLabel = p.shift || "No shift";
+      var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
+      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
+    });
     list.innerHTML = html;
-    var removeBtns = list.querySelectorAll(".remove-btn");
-    for (var j = 0; j < removeBtns.length; j++) {
-      removeBtns[j].addEventListener("click", function() {
-        var loginToRemove = this.getAttribute("data-login");
-        apiCall({ action: "removePerson", login: loginToRemove }, function(res) {
-          if (res && res.success) { people = people.filter(function(p) { return p.login !== loginToRemove; }); delete leaveData[loginToRemove]; renderPeopleList(); populateLoginSelect(); showToast("Removed " + loginToRemove, false); }
+    list.querySelectorAll(".remove-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var login = this.getAttribute("data-login");
+        apiCall({ action: "removePerson", login: login }, function(res) {
+          if (res && res.success) { people = people.filter(function(p) { return p.login !== login; }); delete leaveData[login]; renderPeopleList(); populateLoginSelect(); showToast("Removed " + login, false); }
         });
       });
-    }
+    });
   }
 
   // --- INIT ---
-  selectedWeek = getCurrentWeek(); dashWeek = getCurrentWeek();
+  selectedWeek = getCurrentWeek(); dashWeek = getCurrentWeek(); rotaWeek = getCurrentWeek();
   buildWeekTabs(); setLoggedIn(false);
   if (API_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") { loadData(); }
 })();
