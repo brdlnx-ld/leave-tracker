@@ -514,6 +514,27 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   </div>
 </div>
 
+<!-- EDIT PERSON MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal" style="text-align:left;">
+    <h3 style="margin-bottom:12px;">Edit <span id="edit-login-display"></span></h3>
+    <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Role</label>
+    <select id="edit-role" style="margin-bottom:12px;">
+      <option value="SM">Smile Maker</option>
+      <option value="PI">Process Instructor</option>
+      <option value="SME">SME</option>
+    </select>
+    <label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Shift</label>
+    <select id="edit-shift" style="margin-bottom:16px;">
+      <option value="DAYS">Days</option>
+      <option value="TWI">Twilight</option>
+      <option value="NIGHTS">Nights</option>
+    </select>
+    <button class="modal-btn primary" id="edit-save">Save Changes</button>
+    <button class="modal-btn secondary" id="edit-cancel">Cancel</button>
+  </div>
+</div>
+
 <!-- SUBMIT VIEW -->
 <div id="view-submit" class="view active">
   <div class="card">
@@ -943,7 +964,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       var rl = p.role === "SM" ? "Smile Maker" : p.role === "PI" ? "Process Instructor" : "SME";
       var shiftLabel = p.shift || "No shift";
       var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
-      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
+      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="edit-person-btn" data-login="' + p.login + '" data-role="' + p.role + '" data-shift="' + (p.shift || "") + '" style="background:none;border:none;color:var(--primary);font-size:16px;cursor:pointer;padding:8px;"><i class="fa-solid fa-pen"></i></button><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
     });
     list.innerHTML = html;
     list.querySelectorAll(".remove-btn").forEach(function(btn) {
@@ -954,7 +975,42 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         });
       });
     });
+    list.querySelectorAll(".edit-person-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var login = this.getAttribute("data-login");
+        var role = this.getAttribute("data-role");
+        var shift = this.getAttribute("data-shift");
+        showEditModal(login, role, shift);
+      });
+    });
   }
+
+  // --- Edit Person ---
+  var editLogin = null;
+  function showEditModal(login, role, shift) {
+    editLogin = login;
+    document.getElementById("edit-login-display").textContent = login;
+    document.getElementById("edit-role").value = role;
+    document.getElementById("edit-shift").value = shift || "DAYS";
+    document.getElementById("edit-modal").classList.add("show");
+  }
+  document.getElementById("edit-save").addEventListener("click", function() {
+    var role = document.getElementById("edit-role").value;
+    var shift = document.getElementById("edit-shift").value;
+    apiCall({ action: "updatePerson", login: editLogin, role: role, shift: shift }, function(res) {
+      if (res && res.success) {
+        var person = people.find(function(p) { return p.login === editLogin; });
+        if (person) { person.role = role; person.shift = shift; }
+        document.getElementById("edit-modal").classList.remove("show");
+        renderPeopleList();
+        populateLoginSelect();
+        showToast("Updated " + editLogin, false);
+      } else { showToast("Failed to update", true); }
+    });
+  });
+  document.getElementById("edit-cancel").addEventListener("click", function() {
+    document.getElementById("edit-modal").classList.remove("show");
+  });
 
   // --- INIT ---
   selectedWeek = getCurrentWeek(); dashWeek = getCurrentWeek(); rotaWeek = getCurrentWeek();
