@@ -650,7 +650,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 (function() {
   // ======== CONFIG ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbyypVQbQLx9PvRb-4Nsh9ZS1rgVsjJCvRLc44XmoSVkwKsFb47lxIBLyCcZB6t0_Y-h/exec";
+  var API_URL = "https://script.google.com/macros/s/AKfycbwIRnF36aLTCr3hDD0Ge05qOaDbv75FE_WD5USNTPb1VV7p3yCh9oxF0PdTWHihSAhk/exec";
   var ADMIN_PIN = "1234";
   // =========================
 
@@ -753,7 +753,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     if (!person) return;
     if (person.pin) {
       showPinModal("Enter your PIN", "Hi " + login, function(pin) {
-        if (pin === person.pin) { currentUser = login; setLoggedIn(true); showToast("Logged in as " + login, false); }
+        if (String(pin) === String(person.pin)) { currentUser = login; setLoggedIn(true); showToast("Logged in as " + login, false); }
         else { showToast("Incorrect PIN", true); document.getElementById("login-select").value = ""; currentUser = null; setLoggedIn(false); }
       });
     } else {
