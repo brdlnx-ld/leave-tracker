@@ -597,6 +597,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <p style="font-size:10px;color:var(--text-muted);margin-bottom:8px;"><span style="display:inline-block;width:14px;height:14px;background:var(--primary-light);color:#1565c0;border-radius:3px;text-align:center;font-size:8px;font-weight:700;line-height:14px;vertical-align:middle;margin-right:4px;">AL</span>On Leave&nbsp;&nbsp;<span style="display:inline-block;width:14px;height:14px;background:var(--border-light);color:var(--text-secondary);border-radius:3px;text-align:center;font-size:8px;font-weight:700;line-height:14px;vertical-align:middle;margin-right:4px;">W</span>Working</p>
     <div id="dash-list"></div>
   </div>
+  <button class="btn-primary" id="export-csv-btn" style="background:var(--text-secondary);"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
 </div>
 
 <!-- ROTA VIEW -->
@@ -609,6 +610,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <div id="rota-sessions"></div>
   <button class="btn-primary" id="save-rota-btn"><i class="fa-solid fa-floppy-disk"></i> Save Rota</button>
   <button class="btn-primary" id="publish-rota-btn" style="background:var(--success);"><i class="fa-solid fa-share-nodes"></i> Publish Rota (Image)</button>
+  <button class="btn-primary" id="copy-next-week-btn" style="background:var(--text-secondary);"><i class="fa-solid fa-copy"></i> Copy to Next Week</button>
 </div>
 
 <!-- MANAGE VIEW -->
@@ -839,6 +841,32 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     listEl.innerHTML = html;
   }
 
+  // --- Export Dashboard CSV ---
+  document.getElementById("export-csv-btn").addEventListener("click", function() {
+    var today = dateKey(new Date());
+    var filtered = people.filter(function(p) { return (activeFilter === "all" || p.role === activeFilter) && (dashShiftFilter === "all" || p.shift === dashShiftFilter); }).sort(function(a,b) { return a.login.localeCompare(b.login); });
+    if (filtered.length === 0) { showToast("No data to export", true); return; }
+    var days = getWeekDays(dashWeek);
+    var rows = [["Login", "Role", "Shift"].concat(days.map(function(d) { return d.name + " " + d.date.getDate(); }))];
+    filtered.forEach(function(person) {
+      var pl = leaveData[person.login] || [];
+      var row = [person.login, person.role, person.shift || ""];
+      days.forEach(function(d) {
+        var has = pl.indexOf(d.key) !== -1;
+        var isWorking = person.availability && person.availability.split(",").indexOf(d.name) !== -1;
+        row.push(has ? "AL" : (isWorking ? "W" : ""));
+      });
+      rows.push(row);
+    });
+    var csv = rows.map(function(r) { return r.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
+    var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "LCY8-Dashboard-W" + dashWeek + ".csv";
+    link.click();
+    showToast("CSV exported", false);
+  });
+
   // --- Rota Builder ---
   function buildRotaWeekTabs() { var c = document.getElementById("rota-week-tabs"); c.innerHTML = ""; getWeeks().forEach(function(wk) { var t = document.createElement("button"); t.className = "week-tab" + (wk === rotaWeek ? " active" : ""); var d = getWeekDays(wk); t.textContent = "W" + wk + " (" + shortDate(d[0].date) + ")"; t.setAttribute("data-week", wk); t.addEventListener("click", function() { rotaWeek = parseInt(this.getAttribute("data-week")); buildRotaWeekTabs(); loadRota(); }); c.appendChild(t); }); }
   function buildRotaShiftTabs() { var c = document.getElementById("rota-shift-tabs"); c.innerHTML = ""; ["DAYS","TWI","NIGHTS"].forEach(function(s) { var t = document.createElement("button"); t.className = "shift-tab" + (s === rotaShift ? " active" : ""); t.textContent = s === "TWI" ? "Twilight" : s.charAt(0) + s.slice(1).toLowerCase(); t.setAttribute("data-shift", s); t.addEventListener("click", function() { rotaShift = this.getAttribute("data-shift"); buildRotaShiftTabs(); loadRota(); }); c.appendChild(t); }); }
@@ -1033,6 +1061,25 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     });
   });
 
+  // Copy Rota to Next Week
+  document.getElementById("copy-next-week-btn").addEventListener("click", function() {
+    if (rotaData.length === 0) { showToast("Nothing to copy - this week is empty", true); return; }
+    var nextWeek = rotaWeek + 1;
+    if (!confirm("Copy this rota to Week " + nextWeek + "? This will overwrite any existing rota saved for that week.")) return;
+    var shifted = rotaData.map(function(a) {
+      var d = new Date(a.day + "T12:00:00");
+      d.setDate(d.getDate() + 7);
+      return { session: a.session, day: dateKey(d), login: a.login };
+    });
+    var btn = this; btn.disabled = true; btn.textContent = "Copying...";
+    var encoded = encodeURIComponent(JSON.stringify(shifted));
+    apiCall({ action: "saveRota", week: nextWeek, shift: rotaShift, assignments: encoded }, function(res) {
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy to Next Week';
+      if (res && res.success) { showToast("Copied to Week " + nextWeek + "!", false); }
+      else { showToast("Failed to copy rota", true); }
+    });
+  });
+
   // Save Rota
   document.getElementById("save-rota-btn").addEventListener("click", function() {
     var btn = this; btn.disabled = true; btn.textContent = "Saving...";
@@ -1078,7 +1125,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       var shiftLabel = p.shift || "No shift";
       var availLabel = p.availability || "Not set";
       var rc = p.role === "SM" ? "sm" : p.role === "PI" ? "pi" : "sme";
-      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + ' | ' + availLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="edit-person-btn" data-login="' + p.login + '" data-role="' + p.role + '" data-shift="' + (p.shift || "") + '" data-availability="' + (p.availability || "") + '" style="background:none;border:none;color:var(--primary);font-size:16px;cursor:pointer;padding:8px;"><i class="fa-solid fa-pen"></i></button><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
+      html += '<div class="person-row"><div class="person-info"><div class="person-login">' + p.login + '</div><div class="person-role">' + rl + ' | ' + shiftLabel + ' | ' + availLabel + '</div></div><span class="leave-role ' + rc + '" style="margin-right:4px;">' + p.role + '</span><button class="reset-pin-btn" data-login="' + p.login + '" title="Reset PIN" style="background:none;border:none;color:var(--warning);font-size:16px;cursor:pointer;padding:8px;"><i class="fa-solid fa-key"></i></button><button class="edit-person-btn" data-login="' + p.login + '" data-role="' + p.role + '" data-shift="' + (p.shift || "") + '" data-availability="' + (p.availability || "") + '" style="background:none;border:none;color:var(--primary);font-size:16px;cursor:pointer;padding:8px;"><i class="fa-solid fa-pen"></i></button><button class="remove-btn" data-login="' + p.login + '"><i class="fa-solid fa-trash-can"></i></button></div>';
     });
     list.innerHTML = html;
     list.querySelectorAll(".remove-btn").forEach(function(btn) {
@@ -1086,6 +1133,16 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         var login = this.getAttribute("data-login");
         apiCall({ action: "removePerson", login: login }, function(res) {
           if (res && res.success) { people = people.filter(function(p) { return p.login !== login; }); delete leaveData[login]; renderPeopleList(); populateLoginSelect(); showToast("Removed " + login, false); }
+        });
+      });
+    });
+    list.querySelectorAll(".reset-pin-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var login = this.getAttribute("data-login");
+        if (!confirm("Reset PIN for " + login + "? They'll be asked to set a new one next login.")) return;
+        apiCall({ action: "setPin", login: login, pin: "" }, function(res) {
+          if (res && res.success) { var person = people.find(function(p) { return p.login === login; }); if (person) person.pin = ""; showToast("PIN reset for " + login, false); }
+          else { showToast("Failed to reset PIN", true); }
         });
       });
     });
