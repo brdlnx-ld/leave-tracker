@@ -354,6 +354,7 @@ a { color: var(--color-link, var(--color-primary)); }</style>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LCY8 Leave Tracker</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="manifest" href="manifest.json">
 <style>
 :root {
@@ -436,6 +437,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .leave-dot { width: 20px; height: 20px; border-radius: 4px; font-size: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 .leave-dot.on { background: var(--primary-light); color: #1565c0; }
 .leave-dot.off { background: var(--border-light); color: transparent; }
+.leave-dot.work { background: var(--border-light); color: var(--text-secondary); }
 .leave-dot.today-marker { outline: 2px solid var(--primary); }
 
 .person-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-light); gap: 8px; }
@@ -487,6 +489,8 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 /* Rota day cells */
 .rota-cell { min-height: 50px; background: var(--bg); border-radius: 6px; padding: 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px solid var(--border-light); }
 .rota-cell.filled { background: var(--primary-light); border-color: var(--primary); }
+.rota-cell.understaffed { background: #ffe0e0; border-color: var(--error); }
+.rota-cell.understaffed .rota-name { color: var(--error); }
 .rota-assigned { display: flex; align-items: center; gap: 2px; background: var(--surface); border-radius: 4px; padding: 2px 4px; font-size: 9px; width: 100%; justify-content: space-between; }
 .rota-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rota-remove { background: none; border: none; color: var(--error); cursor: pointer; font-size: 12px; font-weight: 700; padding: 0 2px; line-height: 1; }
@@ -589,6 +593,8 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="card-title">Week View</div>
     <div class="week-scroll"><div class="week-tabs" id="dash-week-tabs"></div></div>
     <div class="filter-row" id="dash-filters"></div>
+    <div class="filter-row" id="dash-shift-filters"></div>
+    <p style="font-size:10px;color:var(--text-muted);margin-bottom:8px;"><span style="display:inline-block;width:14px;height:14px;background:var(--primary-light);color:#1565c0;border-radius:3px;text-align:center;font-size:8px;font-weight:700;line-height:14px;vertical-align:middle;margin-right:4px;">AL</span>On Leave&nbsp;&nbsp;<span style="display:inline-block;width:14px;height:14px;background:var(--border-light);color:var(--text-secondary);border-radius:3px;text-align:center;font-size:8px;font-weight:700;line-height:14px;vertical-align:middle;margin-right:4px;">W</span>Working</p>
     <div id="dash-list"></div>
   </div>
 </div>
@@ -602,6 +608,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   </div>
   <div id="rota-sessions"></div>
   <button class="btn-primary" id="save-rota-btn"><i class="fa-solid fa-floppy-disk"></i> Save Rota</button>
+  <button class="btn-primary" id="publish-rota-btn" style="background:var(--success);"><i class="fa-solid fa-share-nodes"></i> Publish Rota (Image)</button>
 </div>
 
 <!-- MANAGE VIEW -->
@@ -661,6 +668,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   var rotaShift = "DAYS";
   var activeFilter = "all";
   var manageFilter = "all";
+  var dashShiftFilter = "all";
   var currentUser = null;
   var adminUnlocked = false;
   var DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -818,13 +826,16 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     // Filters
     var fe = document.getElementById("dash-filters"); fe.innerHTML = "";
     [{k:"all",l:"All"},{k:"SM",l:"SM"},{k:"PI",l:"PI"},{k:"SME",l:"SME"}].forEach(function(o) { var ch = document.createElement("button"); ch.className = "filter-chip" + (activeFilter === o.k ? " active" : ""); ch.textContent = o.l; ch.setAttribute("data-filter", o.k); ch.addEventListener("click", function() { activeFilter = this.getAttribute("data-filter"); renderDashboard(); }); fe.appendChild(ch); });
+    // Shift filter
+    var se = document.getElementById("dash-shift-filters"); se.innerHTML = "";
+    [{k:"all",l:"All Shifts"},{k:"DAYS",l:"Days"},{k:"TWI",l:"Twilight"},{k:"NIGHTS",l:"Nights"}].forEach(function(o) { var ch = document.createElement("button"); ch.className = "filter-chip" + (dashShiftFilter === o.k ? " active" : ""); ch.textContent = o.l; ch.setAttribute("data-filter", o.k); ch.addEventListener("click", function() { dashShiftFilter = this.getAttribute("data-filter"); renderDashboard(); }); se.appendChild(ch); });
     // List
-    var filtered = people.filter(function(p) { return activeFilter === "all" || p.role === activeFilter; }).sort(function(a,b) { return a.login.localeCompare(b.login); });
+    var filtered = people.filter(function(p) { return (activeFilter === "all" || p.role === activeFilter) && (dashShiftFilter === "all" || p.shift === dashShiftFilter); }).sort(function(a,b) { return a.login.localeCompare(b.login); });
     var listEl = document.getElementById("dash-list");
     if (filtered.length === 0) { listEl.innerHTML = '<div class="loading"><p>No people</p></div>'; return; }
     var days = getWeekDays(dashWeek);
     var html = '<div style="display:flex;gap:2px;justify-content:flex-end;margin-bottom:8px;padding-right:4px;">'; days.forEach(function(d) { html += '<div style="width:20px;text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">' + d.name.charAt(0) + '</div>'; }); html += '</div>';
-    filtered.forEach(function(person) { var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme"; html += '<div class="leave-row"><div class="leave-name">' + person.login + '</div><span class="leave-role ' + rc + '">' + person.role + '</span><div class="leave-days">'; var pl = leaveData[person.login] || []; days.forEach(function(d) { var has = pl.indexOf(d.key) !== -1; var isT = d.key === today; html += '<div class="leave-dot ' + (has?"on":"off") + (isT?" today-marker":"") + '">' + (has?"AL":"") + '</div>'; }); html += '</div></div>'; });
+    filtered.forEach(function(person) { var rc = person.role === "SM" ? "sm" : person.role === "PI" ? "pi" : "sme"; html += '<div class="leave-row"><div class="leave-name">' + person.login + '</div><span class="leave-role ' + rc + '">' + person.role + '</span><div class="leave-days">'; var pl = leaveData[person.login] || []; days.forEach(function(d) { var has = pl.indexOf(d.key) !== -1; var isT = d.key === today; var cls, label; if (has) { cls = "on"; label = "AL"; } else { var isWorking = person.availability && person.availability.split(",").indexOf(d.name) !== -1; cls = isWorking ? "work" : "off"; label = isWorking ? "W" : ""; } html += '<div class="leave-dot ' + cls + (isT?" today-marker":"") + '">' + label + '</div>'; }); html += '</div></div>'; });
     listEl.innerHTML = html;
   }
 
@@ -875,7 +886,9 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">';
       weekDays.forEach(function(day) {
         var dayAssignments = rotaData.filter(function(a) { return a.session === session.id && a.day === day.key; });
+        var isShort = session.min > 0 && dayAssignments.length < session.min;
         var cellClass = dayAssignments.length > 0 ? "rota-cell filled" : "rota-cell empty";
+        if (isShort) cellClass += " understaffed";
         html += '<div class="' + cellClass + '" data-session="' + session.id + '" data-day="' + day.key + '">';
         if (dayAssignments.length > 0) {
           dayAssignments.forEach(function(a) {
@@ -883,6 +896,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
           });
         }
         html += '<button class="rota-add-btn" data-session="' + session.id + '" data-day="' + day.key + '">+</button>';
+        if (isShort) html += '<div style="font-size:8px;color:var(--error);font-weight:700;">Need ' + session.min + '</div>';
         html += '</div>';
       });
       html += '</div>';
@@ -976,6 +990,48 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
   }
+
+  // Publish Rota as Image
+  document.getElementById("publish-rota-btn").addEventListener("click", function() {
+    var btn = this; btn.disabled = true; btn.textContent = "Generating...";
+    var weekDays = getWeekDays(rotaWeek);
+    var shiftLabel = rotaShift === "TWI" ? "Twilight" : rotaShift.charAt(0) + rotaShift.slice(1).toLowerCase();
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "position:fixed;left:-9999px;top:0;width:700px;background:#fff;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;";
+    var html = '<div style="background:#0052CC;color:#fff;padding:16px;border-radius:8px;margin-bottom:16px;"><div style="font-size:18px;font-weight:700;">LCY8 Rota - ' + shiftLabel + '</div><div style="font-size:13px;opacity:0.85;margin-top:2px;">Week ' + rotaWeek + ' (' + shortDate(weekDays[0].date) + ' - ' + shortDate(weekDays[6].date) + ')</div></div>';
+    SESSIONS.forEach(function(session) {
+      html += '<div style="margin-bottom:14px;"><div style="font-size:14px;font-weight:700;color:#172b4d;border-left:4px solid #0052CC;padding-left:8px;margin-bottom:6px;">' + session.name + '</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+      html += '<tr>'; weekDays.forEach(function(d) { html += '<td style="text-align:center;font-weight:600;color:#8993a4;padding:4px;border-bottom:1px solid #ebecf0;">' + d.name + ' ' + d.date.getDate() + '</td>'; }); html += '</tr>';
+      html += '<tr>'; weekDays.forEach(function(day) {
+        var names = rotaData.filter(function(a) { return a.session === session.id && a.day === day.key; }).map(function(a) { return a.login; });
+        html += '<td style="text-align:center;padding:6px 4px;vertical-align:top;">' + (names.length ? names.join('<br>') : '<span style="color:#c1c7d0;">-</span>') + '</td>';
+      }); html += '</tr></table></div>';
+    });
+    wrap.innerHTML = html;
+    document.body.appendChild(wrap);
+    html2canvas(wrap, { backgroundColor: "#ffffff", scale: 2 }).then(function(canvas) {
+      document.body.removeChild(wrap);
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-share-nodes"></i> Publish Rota (Image)';
+      canvas.toBlob(function(blob) {
+        var fileName = "LCY8-Rota-W" + rotaWeek + "-" + rotaShift + ".png";
+        var file = new File([blob], fileName, { type: "image/png" });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: "LCY8 Rota" }).catch(function() {});
+        } else {
+          var link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = fileName;
+          link.click();
+          showToast("Rota image downloaded", false);
+        }
+      });
+    }).catch(function() {
+      document.body.removeChild(wrap);
+      btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-share-nodes"></i> Publish Rota (Image)';
+      showToast("Failed to generate image", true);
+    });
+  });
 
   // Save Rota
   document.getElementById("save-rota-btn").addEventListener("click", function() {
