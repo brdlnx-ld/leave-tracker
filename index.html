@@ -496,6 +496,23 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .rota-remove { background: none; border: none; color: var(--error); cursor: pointer; font-size: 12px; font-weight: 700; padding: 0 2px; line-height: 1; }
 .rota-add-btn { background: none; border: 1px dashed var(--border); border-radius: 4px; color: var(--primary); cursor: pointer; font-size: 14px; font-weight: 700; width: 100%; padding: 2px 0; margin-top: auto; }
 .rota-add-btn:active { background: var(--primary-light); }
+.vet-request-btn { background: none; border: 1px dashed var(--warning); border-radius: 4px; color: var(--warning); cursor: pointer; font-size: 10px; font-weight: 700; width: 100%; padding: 2px 0; margin-top: 2px; }
+.vet-card { background: #fff8e1; border: 1px solid var(--warning); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.vet-card.closed { background: #e6f4eb; border-color: var(--success); opacity: 0.85; }
+.vet-card .vet-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.vet-card .vet-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+.vet-card .vet-responders { font-size: 11px; color: var(--success); margin-bottom: 6px; }
+.vet-close-btn { background: none; border: 1px solid var(--error); color: var(--error); font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+.vet-role-btn-row { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 8px; }
+.vet-role-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; color: #fff; }
+.vet-role-btn.sm { background: #2e7d32; }
+.vet-role-btn.pi { background: #e65100; }
+.vet-role-btn.sme { background: #6a1b9a; }
+.vet-banner-card { background: #fff8e1; border: 2px solid var(--warning); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
+.vet-banner-title { font-size: 14px; font-weight: 700; color: #573a00; margin-bottom: 4px; }
+.vet-banner-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+.vet-interest-btn { width: 100%; padding: 10px; background: var(--warning); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; }
+.vet-interest-btn:disabled { opacity: 0.6; }
 
 /* Availability day picker */
 .day-picker { display: flex; gap: 4px; margin-top: 8px; margin-bottom: 8px; }
@@ -569,6 +586,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="card-title">Who are you?</div>
     <select id="login-select"><option value="">Select your login...</option></select>
   </div>
+  <div id="vet-banner"></div>
   <div class="card">
     <div class="card-title">Select week</div>
     <div class="week-scroll"><div class="week-tabs" id="week-tabs"></div></div>
@@ -607,6 +625,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="week-scroll"><div class="week-tabs" id="rota-week-tabs"></div></div>
     <div class="shift-tabs" id="rota-shift-tabs"></div>
   </div>
+  <div id="vet-active-requests"></div>
   <div id="rota-sessions"></div>
   <button class="btn-primary" id="save-rota-btn"><i class="fa-solid fa-floppy-disk"></i> Save Rota</button>
   <button class="btn-primary" id="publish-rota-btn" style="background:var(--success);"><i class="fa-solid fa-share-nodes"></i> Publish Rota (Image)</button>
@@ -659,13 +678,14 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 (function() {
   // ======== CONFIG ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbzCAl3r7wFlfjCb3rR1FYLsFpM9rUgjkEoQ-DRQ0K1yy_qFQXCH4E4x1Fdh9skDd9al/exec";
+  var API_URL = "https://script.google.com/macros/s/AKfycbwrixzxIFWQwziG4mdlnwGPJKKkh_SD9IIg0QM6gCTXGNtf5SU6zXtNdtwV20UcDCnU/exec";
   var ADMIN_PIN = "1234";
   // =========================
 
   var people = [];
   var leaveData = {};
   var rotaData = []; // current rota assignments for selected week+shift
+  var vetRequests = []; // VET cover requests
   var selectedWeek, dashWeek, rotaWeek;
   var rotaShift = "DAYS";
   var activeFilter = "all";
@@ -705,6 +725,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     function checkReady() { loaded++; if (loaded >= 2) { populateLoginSelect(); } }
     apiCall({ action: "getPeople" }, function(res) { if (res && res.people) people = res.people; checkReady(); });
     apiCall({ action: "getLeave" }, function(res) { if (res && res.leave) leaveData = res.leave; checkReady(); });
+    loadVetRequests();
   }
   function showToast(msg, isError) { var t = document.getElementById("toast"); t.textContent = msg; t.style.background = isError ? "#de350b" : "#36b37e"; t.style.display = "block"; setTimeout(function() { t.style.display = "none"; }, 3000); }
 
@@ -728,7 +749,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
     document.querySelector('[data-view="' + viewName + '"]').classList.add("active");
     document.getElementById("view-" + viewName).classList.add("active");
-    if (viewName === "submit") { buildWeekTabs(); renderDayGrid(); }
+    if (viewName === "submit") { buildWeekTabs(); renderDayGrid(); renderSubmitVetBanner(); }
     if (viewName === "myleave") renderMyLeave();
     if (viewName === "dashboard") renderDashboard();
     if (viewName === "rota") { buildRotaWeekTabs(); buildRotaShiftTabs(); loadRota(); }
@@ -763,13 +784,13 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     if (!person) return;
     if (person.pin) {
       showPinModal("Enter your PIN", "Hi " + login, function(pin) {
-        if (String(pin) === String(person.pin)) { currentUser = login; setLoggedIn(true); showToast("Logged in as " + login, false); }
+        if (String(pin) === String(person.pin)) { currentUser = login; setLoggedIn(true); renderSubmitVetBanner(); showToast("Logged in as " + login, false); }
         else { showToast("Incorrect PIN", true); document.getElementById("login-select").value = ""; currentUser = null; setLoggedIn(false); }
       });
     } else {
       showPinModal("Create your PIN", "Hi " + login + " — set a 4-digit PIN", function(pin) {
         apiCall({ action: "setPin", login: login, pin: pin }, function(res) {
-          if (res && res.success) { person.pin = pin; currentUser = login; setLoggedIn(true); showToast("PIN set! Logged in", false); }
+          if (res && res.success) { person.pin = pin; currentUser = login; setLoggedIn(true); renderSubmitVetBanner(); showToast("PIN set! Logged in", false); }
           else { showToast("Failed to set PIN", true); document.getElementById("login-select").value = ""; setLoggedIn(false); }
         });
       });
@@ -876,6 +897,121 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       rotaData = (res && res.assignments) ? res.assignments : [];
       renderRotaSessions();
     });
+    loadVetRequests();
+  }
+
+  // --- VET Cover Requests ---
+  function loadVetRequests() {
+    apiCall({ action: "getVetRequests" }, function(res) {
+      vetRequests = (res && res.requests) ? res.requests : [];
+      renderVetRequests();
+      renderSubmitVetBanner();
+    });
+  }
+
+  function vetEligibleRoles(minRole) {
+    if (minRole === "SM") return ["SM"];
+    if (minRole === "PI") return ["SM","PI"];
+    return ["SM","PI","SME"];
+  }
+
+  function renderSubmitVetBanner() {
+    var container = document.getElementById("vet-banner");
+    if (!container) return;
+    if (!currentUser) { container.innerHTML = ""; return; }
+    var person = people.find(function(p) { return p.login === currentUser; });
+    if (!person) { container.innerHTML = ""; return; }
+    var matches = vetRequests.filter(function(r) {
+      if (r.status !== "open") return false;
+      if (r.shift !== person.shift) return false;
+      if (vetEligibleRoles(r.minRole).indexOf(person.role) === -1) return false;
+      if (r.responders.indexOf(currentUser) !== -1) return false;
+      return true;
+    });
+    if (matches.length === 0) { container.innerHTML = ""; return; }
+    var html = "";
+    matches.forEach(function(r) {
+      var d = new Date(r.day + "T12:00:00");
+      var dayLabel = DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];
+      var spotsLeft = r.needed - r.responders.length;
+      html += '<div class="vet-banner-card"><div class="vet-banner-title"><i class="fa-solid fa-bullhorn"></i> Cover needed</div><div class="vet-banner-meta">' + r.sessionName + ' - ' + dayLabel + ' (' + spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' left)</div><button class="vet-interest-btn" data-id="' + r.id + '">I\'m Interested</button></div>';
+    });
+    container.innerHTML = html;
+    container.querySelectorAll(".vet-interest-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var id = this.getAttribute("data-id");
+        var b = this; b.disabled = true; b.textContent = "Sending...";
+        apiCall({ action: "respondVet", id: id, login: currentUser }, function(res) {
+          if (res && res.success) { showToast("Thanks! We'll be in touch", false); loadVetRequests(); }
+          else { showToast(res && res.error ? res.error : "Failed to respond", true); b.disabled = false; b.textContent = "I'm Interested"; }
+        });
+      });
+    });
+  }
+
+  function roleLabelForMin(minRole) {
+    if (minRole === "SM") return "SM only";
+    if (minRole === "PI") return "SM + PI";
+    return "Everyone (SM/PI/SME)";
+  }
+
+  function renderVetRequests() {
+    var container = document.getElementById("vet-active-requests");
+    if (!container) return;
+    var relevant = vetRequests.filter(function(r) { return String(r.week) === String(rotaWeek) && r.shift === rotaShift; });
+    if (relevant.length === 0) { container.innerHTML = ""; return; }
+    relevant.sort(function(a,b) { return (a.status === "open" ? 0 : 1) - (b.status === "open" ? 0 : 1); });
+    var html = "";
+    relevant.forEach(function(r) {
+      var d = new Date(r.day + "T12:00:00");
+      var dayLabel = DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];
+      html += '<div class="vet-card' + (r.status === "closed" ? " closed" : "") + '">';
+      html += '<div class="vet-title"><i class="fa-solid fa-bullhorn"></i> ' + r.sessionName + ' - ' + dayLabel + '</div>';
+      html += '<div class="vet-meta">Eligible: ' + roleLabelForMin(r.minRole) + ' | ' + r.responders.length + '/' + r.needed + ' responded' + (r.status === "closed" ? ' (Closed)' : '') + '</div>';
+      if (r.responders.length > 0) { html += '<div class="vet-responders">' + r.responders.join(", ") + '</div>'; }
+      if (r.status === "open") { html += '<button class="vet-close-btn" data-id="' + r.id + '">Close Request</button>'; }
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    container.querySelectorAll(".vet-close-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var id = this.getAttribute("data-id");
+        apiCall({ action: "closeVetRequest", id: id }, function(res) {
+          if (res && res.success) { loadVetRequests(); showToast("Request closed", false); }
+          else { showToast("Failed to close", true); }
+        });
+      });
+    });
+  }
+
+  function showVetRequestModal(sessionId, sessionName, dayKey) {
+    var overlay = document.createElement("div");
+    overlay.className = "modal-overlay show";
+    var modal = document.createElement("div");
+    modal.className = "modal";
+    modal.style.textAlign = "left";
+    var d = new Date(dayKey + "T12:00:00");
+    var dayLabel = DAY_NAMES[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];
+    modal.innerHTML = '<h3 style="margin-bottom:4px;">Request Cover</h3><p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">' + sessionName + ' - ' + dayLabel + '</p><label style="font-size:11px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">How many needed?</label><input type="number" id="vet-needed-input" min="1" value="1" style="margin-bottom:4px;"><p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Choose who can respond:</p><div class="vet-role-btn-row"><button class="vet-role-btn sm" data-role="SM">SM</button><button class="vet-role-btn pi" data-role="PI">PI</button><button class="vet-role-btn sme" data-role="SME">SME</button></div>';
+    var cancelBtn = document.createElement("button");
+    cancelBtn.className = "modal-btn secondary";
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.addEventListener("click", function() { document.body.removeChild(overlay); });
+    modal.appendChild(cancelBtn);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    modal.querySelectorAll(".vet-role-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var minRole = this.getAttribute("data-role");
+        var neededVal = parseInt(document.getElementById("vet-needed-input").value) || 1;
+        if (neededVal < 1) neededVal = 1;
+        apiCall({ action: "createVetRequest", week: rotaWeek, shift: rotaShift, sessionId: sessionId, sessionName: sessionName, day: dayKey, minRole: minRole, needed: neededVal }, function(res) {
+          document.body.removeChild(overlay);
+          if (res && res.success) { loadVetRequests(); showToast("Cover request sent (" + roleLabelForMin(minRole) + ")", false); }
+          else { showToast("Failed to send request", true); }
+        });
+      });
+    });
   }
 
   function getShiftPeople() {
@@ -925,6 +1061,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         }
         html += '<button class="rota-add-btn" data-session="' + session.id + '" data-day="' + day.key + '">+</button>';
         if (isShort) html += '<div style="font-size:8px;color:var(--error);font-weight:700;">Need ' + session.min + '</div>';
+        html += '<button class="vet-request-btn" data-session="' + session.id + '" data-day="' + day.key + '" data-session-name="' + session.name + '"><i class="fa-solid fa-bullhorn"></i></button>';
         html += '</div>';
       });
       html += '</div>';
@@ -972,6 +1109,17 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 
         if (eligible.length === 0) { showToast("No eligible people available", true); return; }
         showRotaPicker(sessionId, dayKey, eligible);
+      });
+    });
+
+    // Attach vet request handlers
+    container.querySelectorAll(".vet-request-btn").forEach(function(btn) {
+      btn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        var sessionId = this.getAttribute("data-session");
+        var dayKey = this.getAttribute("data-day");
+        var sessionName = this.getAttribute("data-session-name");
+        showVetRequestModal(sessionId, sessionName, dayKey);
       });
     });
   }
