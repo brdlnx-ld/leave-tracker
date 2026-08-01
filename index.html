@@ -503,6 +503,10 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 .vet-card .vet-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
 .vet-card .vet-responders { font-size: 11px; color: var(--success); margin-bottom: 6px; }
 .vet-close-btn { background: none; border: 1px solid var(--error); color: var(--error); font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+.vet-responder-list { margin-bottom: 8px; }
+.vet-responder-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+.vet-confirm-btn { background: var(--success); color: #fff; border: none; border-radius: 4px; font-size: 10px; font-weight: 700; padding: 4px 8px; cursor: pointer; }
+.vet-confirmed-badge { color: var(--success); font-size: 10px; font-weight: 700; }
 .vet-role-btn-row { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 8px; }
 .vet-role-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; color: #fff; }
 .vet-role-btn.sm { background: #2e7d32; }
@@ -678,7 +682,7 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <script>
 (function() {
   // ======== CONFIG ========
-  var API_URL = "https://script.google.com/macros/s/AKfycbwrixzxIFWQwziG4mdlnwGPJKKkh_SD9IIg0QM6gCTXGNtf5SU6zXtNdtwV20UcDCnU/exec";
+  var API_URL = "https://script.google.com/macros/s/AKfycbzgZv8HMbhPpUb4vVGgsSqBnFetGBCjaq3eEATP-u5Trc9Zdly-IVB52qTm4T68Gms/exec";
   var ADMIN_PIN = "1234";
   // =========================
 
@@ -968,7 +972,14 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
       html += '<div class="vet-card' + (r.status === "closed" ? " closed" : "") + '">';
       html += '<div class="vet-title"><i class="fa-solid fa-bullhorn"></i> ' + r.sessionName + ' - ' + dayLabel + '</div>';
       html += '<div class="vet-meta">Eligible: ' + roleLabelForMin(r.minRole) + ' | ' + r.responders.length + '/' + r.needed + ' responded' + (r.status === "closed" ? ' (Closed)' : '') + '</div>';
-      if (r.responders.length > 0) { html += '<div class="vet-responders">' + r.responders.join(", ") + '</div>'; }
+      if (r.responders.length > 0) {
+        html += '<div class="vet-responder-list">';
+        r.responders.forEach(function(login) {
+          var isConfirmed = r.confirmed && r.confirmed.indexOf(login) !== -1;
+          html += '<div class="vet-responder-row"><span>' + login + '</span>' + (isConfirmed ? '<span class="vet-confirmed-badge">&check; Confirmed - Scheduled</span>' : '<button class="vet-confirm-btn" data-id="' + r.id + '" data-login="' + login + '">Confirm &amp; Schedule</button>') + '</div>';
+        });
+        html += '</div>';
+      }
       if (r.status === "open") { html += '<button class="vet-close-btn" data-id="' + r.id + '">Close Request</button>'; }
       html += '</div>';
     });
@@ -979,6 +990,17 @@ select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
         apiCall({ action: "closeVetRequest", id: id }, function(res) {
           if (res && res.success) { loadVetRequests(); showToast("Request closed", false); }
           else { showToast("Failed to close", true); }
+        });
+      });
+    });
+    container.querySelectorAll(".vet-confirm-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var id = this.getAttribute("data-id");
+        var login = this.getAttribute("data-login");
+        var b = this; b.disabled = true; b.textContent = "Confirming...";
+        apiCall({ action: "confirmVetResponder", id: id, login: login }, function(res) {
+          if (res && res.success) { loadVetRequests(); loadRota(); showToast(login + " confirmed and scheduled", false); }
+          else { showToast(res && res.error ? res.error : "Failed to confirm", true); b.disabled = false; b.textContent = "Confirm & Schedule"; }
         });
       });
     });
