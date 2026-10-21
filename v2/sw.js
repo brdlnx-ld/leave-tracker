@@ -1,4 +1,4 @@
-const CACHE='lcy8-leave-v2-2';
+const CACHE='lcy8-leave-v2-3';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('lcy8-leave-v2-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
